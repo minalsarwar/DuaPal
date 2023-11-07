@@ -659,10 +659,13 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget buildCard(String title, String imageAsset) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(40.0),
-      child: Card(
-        margin: EdgeInsets.all(10),
+    return Card(
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15.0),
         child: Stack(
           children: [
             ColorFiltered(
@@ -725,34 +728,37 @@ Widget buildGridCard(String title, String imageAsset) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),
     ),
-    child: Stack(
-      children: [
-        Image.asset(
-          imageAsset,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-        ),
-        Positioned(
-          bottom: 10,
-          left: 10,
-          child: Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(15.0), // Adjust the radius as needed
+      child: Stack(
+        children: [
+          Image.asset(
+            imageAsset,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
