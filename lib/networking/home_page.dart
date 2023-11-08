@@ -6,12 +6,12 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  bool isMainSelected = true;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 113, 176, 205),
-        // leading: IconButton(
-        //   icon: Icon(Icons.menu, color: Colors.white),
-        //   onPressed: () {
-        //     // Handle menu/drawer action
-        //   },
-        // ),
         title: Text(
           appBarTitle,
           style: TextStyle(fontSize: 20),
@@ -114,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      // body: _currentIndex == 3 ? EmotionsContent() : HomeContent(),
       body: _currentIndex == 3
           ? EmotionsContent()
           : _currentIndex == 2
@@ -159,9 +152,113 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  int _currentIndex = 0;
+  bool isMainSelected = true;
+
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          constraints: BoxConstraints(maxWidth: 200),
+          padding: EdgeInsets.symmetric(vertical: 4.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isMainSelected = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: isMainSelected
+                        ? Color.fromARGB(255, 113, 176, 205)
+                        : Colors.white,
+                    elevation: 0,
+                    padding: EdgeInsets.all(2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        bottomLeft: Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  child: Ink(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Main',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: isMainSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isMainSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isMainSelected = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: !isMainSelected
+                        ? Color.fromARGB(255, 113, 176, 205)
+                        : Colors.white,
+                    elevation: 0,
+                    padding: EdgeInsets.all(2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  child: Ink(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Other',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: !isMainSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: !isMainSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: isMainSelected ? buildMainContent() : buildOtherContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget buildMainContent() {
     return ListView(
       children: [
         buildCard('Morning', 'android/assets/morning.jpg'),
@@ -169,7 +266,7 @@ class HomeContent extends StatelessWidget {
         buildCard('Before Sleep', 'android/assets/beforeSleep.jpg'),
         buildDoubleCard('Salah', 'android/assets/salah.jpg', 'After Salah',
             'android/assets/afterSalah.jpg'),
-        buildCard('Ruqyah', 'android/assets/ruqyah.jpg'),
+        buildCard('Ruqyah Healing', 'android/assets/ruqyah.jpg'),
         buildDoubleCard('Praises of Allah', 'android/assets/praisesofAllah.jpg',
             'Salawat', 'android/assets/salawat.jpg'),
         buildDoubleCard('Quranic Duas', 'android/assets/quranicDuas.jpg',
@@ -181,11 +278,40 @@ class HomeContent extends StatelessWidget {
     );
   }
 
+  Widget buildOtherContent() {
+    return GridView.count(
+      crossAxisCount: 2,
+      children: [
+        buildGridCard('Waking Up', 'android/assets/wakingup.jpg'),
+        buildGridCard('Nightmares', 'android/assets/nightmares.jpg'),
+        buildGridCard('Clothes', 'android/assets/clothes.jpg'),
+        buildGridCard('Lavatory & Wudu', 'android/assets/wudu.jpg'),
+        buildGridCard('Food & Drink', 'android/assets/food.jpg'),
+        buildGridCard('Home', 'android/assets/home.jpg'),
+        buildGridCard('Adhan & Masjid', 'android/assets/masjid.jpg'),
+        buildGridCard('Istikharah', 'android/assets/istikhara.jpg'),
+        buildGridCard('Gatherings', 'android/assets/gatherings.jpg'),
+        buildGridCard('Trials & Blessings', 'android/assets/emotions.jpg'),
+        buildGridCard('Protection of Iman', 'android/assets/iman.jpg'),
+        buildGridCard('Hajj & Umrah', 'android/assets/hajj.jpg'),
+        buildGridCard('Travel', 'android/assets/travel.jpg'),
+        buildGridCard('Money & Shopping', 'android/assets/shopping.jpg'),
+        buildGridCard('Social Interactions', 'android/assets/social.jpg'),
+        buildGridCard('Marriage', 'android/assets/marriage.jpg'),
+        buildGridCard('Death', 'android/assets/death.jpg'),
+        buildGridCard('Nature', 'android/assets/nature.jpg'),
+      ],
+    );
+  }
+
   Widget buildCard(String title, String imageAsset) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(40.0),
-      child: Card(
-        margin: EdgeInsets.all(10),
+    return Card(
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15.0),
         child: Stack(
           children: [
             ColorFiltered(
@@ -205,12 +331,19 @@ class HomeContent extends StatelessWidget {
             Positioned(
               bottom: 10,
               left: 10,
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -233,4 +366,45 @@ class HomeContent extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget buildGridCard(String title, String imageAsset) {
+  return Card(
+    margin: EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(15.0), // Adjust the radius as needed
+      child: Stack(
+        children: [
+          Image.asset(
+            imageAsset,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
