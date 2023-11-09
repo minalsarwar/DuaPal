@@ -79,40 +79,46 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 70, width: 60),
                   ),
                   Text('Dua Pal',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 ],
               ),
             ),
             ListTile(
-              leading:
-                  Icon(Icons.repeat, color: Color.fromARGB(255, 113, 176, 205)),
+              leading: Image.asset(
+                'android/assets/tasbih.png', // Adjust the path to the icon
+                width: 26, // Specify the width of the icon
+                height: 26, // Specify the height of the icon
+                color: Color.fromARGB(
+                    255, 113, 176, 205), // Set the desired icon color
+              ),
               title: Text('Tasbih Counter'),
               onTap: () {
                 // Handle Tasbih Counter action
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.cloud, color: Color.fromARGB(255, 113, 176, 205)),
+              leading: Icon(Icons.chat_bubble_outline,
+                  color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('Feedback'),
               onTap: () {
                 // Handle Feedback action
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.help, color: Color.fromARGB(255, 113, 176, 205)),
+              leading: Icon(Icons.help_outline_rounded,
+                  color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('FAQs'),
               onTap: () {
                 // Handle FAQs action
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.info, color: Color.fromARGB(255, 113, 176, 205)),
+              leading: Icon(Icons.info_outline_rounded,
+                  color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('About Dua Pal'),
               onTap: () {
-                // Handle About Dua & Dhikr action
+                // Handle FAQs action
               },
             ),
           ],
