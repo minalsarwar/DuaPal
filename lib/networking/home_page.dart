@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
+import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
+import 'package:flutter_application_1/networking/reminder.dart';
+import 'package:flutter_application_1/networking/settings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
             onPressed: () {
-              // Handle settings action
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
             },
           ),
         ],
@@ -78,28 +84,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.repeat),
+              leading:
+                  Icon(Icons.repeat, color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('Tasbih Counter'),
               onTap: () {
                 // Handle Tasbih Counter action
               },
             ),
             ListTile(
-              leading: Icon(Icons.cloud),
+              leading:
+                  Icon(Icons.cloud, color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('Feedback'),
               onTap: () {
                 // Handle Feedback action
               },
             ),
             ListTile(
-              leading: Icon(Icons.help),
+              leading:
+                  Icon(Icons.help, color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('FAQs'),
               onTap: () {
                 // Handle FAQs action
               },
             ),
             ListTile(
-              leading: Icon(Icons.info),
+              leading:
+                  Icon(Icons.info, color: Color.fromARGB(255, 113, 176, 205)),
               title: Text('About Dua Pal'),
               onTap: () {
                 // Handle About Dua & Dhikr action
@@ -108,11 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: _currentIndex == 3
-          ? EmotionsContent()
-          : _currentIndex == 2
-              ? JournalEntryScreen()
-              : HomeContent(),
+      body: _currentIndex == 1
+          ? FavoritesScreen()
+          : _currentIndex == 4
+              ? ReminderScreen()
+              : _currentIndex == 3
+                  ? EmotionsContent()
+                  : _currentIndex == 2
+                      ? JournalEntryScreen()
+                      : HomeContent(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Color.fromARGB(255, 113, 176, 205),
@@ -122,23 +136,23 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
+            icon: Icon(Icons.favorite_outline),
             label: 'Favourites',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.article),
+            icon: Icon(Icons.article_outlined),
             label: 'Journal',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.face),
+            icon: Icon(Icons.emoji_emotions_outlined),
             label: 'Emotions',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.calendar_today_outlined),
             label: 'Reminder',
           ),
         ],
