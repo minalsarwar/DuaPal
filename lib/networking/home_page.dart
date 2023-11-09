@@ -4,6 +4,7 @@ import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
 import 'package:flutter_application_1/networking/settings.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,6 +37,26 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         appBarTitle = 'Reminder';
         break;
+    }
+
+    Widget buildSocialIcon(String text, IconData iconData) {
+      return Column(
+        children: [
+          Ink(
+            decoration: ShapeDecoration(
+              color: Colors.grey[200],
+              shape: CircleBorder(),
+            ),
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: Icon(
+                iconData,
+                color: Color.fromARGB(255, 113, 176, 205),
+              ),
+            ),
+          ),
+        ],
+      );
     }
 
     return Scaffold(
@@ -87,39 +108,53 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: Image.asset(
                 'android/assets/tasbih.png', // Adjust the path to the icon
-                width: 26, // Specify the width of the icon
-                height: 26, // Specify the height of the icon
+                width: 30, // Specify the width of the icon
+                height: 30, // Specify the height of the icon
                 color: Color.fromARGB(
                     255, 113, 176, 205), // Set the desired icon color
               ),
-              title: Text('Tasbih Counter'),
+              title: Text(
+                'Tasbih Counter',
+                style: TextStyle(fontSize: 16),
+              ),
               onTap: () {
                 // Handle Tasbih Counter action
               },
             ),
             ListTile(
               leading: Icon(Icons.chat_bubble_outline,
-                  color: Color.fromARGB(255, 113, 176, 205)),
-              title: Text('Feedback'),
+                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+              title: Text('Feedback', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle Feedback action
               },
             ),
             ListTile(
               leading: Icon(Icons.help_outline_rounded,
-                  color: Color.fromARGB(255, 113, 176, 205)),
-              title: Text('FAQs'),
+                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+              title: Text('FAQs', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle FAQs action
               },
             ),
             ListTile(
               leading: Icon(Icons.info_outline_rounded,
-                  color: Color.fromARGB(255, 113, 176, 205)),
-              title: Text('About Dua Pal'),
+                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+              title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle FAQs action
               },
+            ),
+            const SizedBox(height: 325),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildSocialIcon('facebook', Icons.facebook),
+                buildSocialIcon('instagram', FontAwesomeIcons.instagram),
+                buildSocialIcon('twitter', FontAwesomeIcons.twitter),
+                buildSocialIcon('telegram', FontAwesomeIcons.telegram),
+                buildSocialIcon('whatsapp', FontAwesomeIcons.whatsapp),
+              ],
             ),
           ],
         ),
