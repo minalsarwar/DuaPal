@@ -117,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: TextField(
                         maxLength: 20,
                         obscureText: true,
+                        controller: passwordController,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           contentPadding: const EdgeInsets.symmetric(
@@ -157,9 +158,25 @@ class _SignUpPageState extends State<SignUpPage> {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
+                  // onPressed: () async {
+                  //   await ApplicationState().signUpWithFirebase(
+                  //       emailController.text, passwordController.text);
+                  //   // Navigator.pushNamed(context, '/login');
+                  //   if (FirebaseAuth.instance.currentUser != null) {
+                  //     // If signed up, navigate to the login screen
+                  //     Navigator.pushNamed(context, '/login');
+                  //   } else {
+                  //     // If not signed up, print a message (you can replace this with your desired action)
+                  //     print('Sign up unsuccessful');
+                  //   }
+                  // },
                   onPressed: () async {
                     await ApplicationState().signUpWithFirebase(
-                        emailController.text, passwordController.text);
+                      emailController.text,
+                      passwordController
+                          .text, // Pass the password from the controller
+                    );
+
                     // Navigator.pushNamed(context, '/login');
                     if (FirebaseAuth.instance.currentUser != null) {
                       // If signed up, navigate to the login screen
@@ -169,6 +186,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       print('Sign up unsuccessful');
                     }
                   },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 118, 181, 197),
                     shape: RoundedRectangleBorder(

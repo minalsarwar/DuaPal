@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/networking/app_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,11 +11,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool isEmailTooLong = false;
+  bool isPasswordIncorrect = false;
 
   @override
   void dispose() {
     emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -118,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextField(
                   maxLength: 20,
                   obscureText: true,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     contentPadding:
@@ -130,6 +135,16 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            // Display an error message if the password is incorrect
+            if (isPasswordIncorrect)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25.0, vertical: 5.0),
+                child: Text(
+                  'Incorrect credentials/email/password entered!',
+                  style: TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              ),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
@@ -137,8 +152,22 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/homepage');
+                  onPressed: () async {
+                    try {
+                      await ApplicationState().signInWithFirebase(
+                        emailController.text,
+                        passwordController.text,
+                      );
+
+                      // If the sign-in is successful, navigate to the home page
+                      Navigator.pushNamed(context, '/homepage');
+                    } catch (error) {
+                      // If an error occurs during sign-in, set the isPasswordIncorrect flag to true
+                      // to display the error message to the user
+                      setState(() {
+                        isPasswordIncorrect = true;
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 118, 181, 197),

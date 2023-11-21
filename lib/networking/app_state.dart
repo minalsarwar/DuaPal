@@ -18,24 +18,57 @@ class ApplicationState extends ChangeNotifier {
   //   }
   // }
 
+  // Future<void> signUpWithFirebase(String email, String password) async {
+  //   try {
+  //     // Replace with your actual authentication code
+  //     // For example, using Firebase Auth:
+  //     // print(_auth.c);
+
+  //     if (password.isEmpty) {
+  //       print('Password cannot be empty');
+  //       // Handle the error appropriately, for example, show a message to the user
+  //       return;
+  //     }
+
+  //     await _auth.createUserWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
+  //     // UserCredential userCredential =
+  //     //     await FirebaseAuth.instance.signInAnonymously();
+  //     // print("yeh print huha");
+  //     // print(x);
+  //     // Your additional logic after successful signup
+  //     notifyListeners();
+  //   } on FirebaseAuthException catch (e) {
+  //     // Handle errors here
+
+  //     print('Firebase Authentication Error: ${e.code}, ${e.message}');
+  //   } catch (e) {
+  //     // Handle other errors
+  //     print('Unexpected Error: $e');
+  //   }
+  // }
+
   Future<void> signUpWithFirebase(String email, String password) async {
     try {
+      if (password.isEmpty) {
+        // Handle the case where the password is empty
+        print('Password cannot be empty');
+        return;
+      }
+
       // Replace with your actual authentication code
       // For example, using Firebase Auth:
-      // print(_auth.c);
-      await _auth.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // UserCredential userCredential =
-      //     await FirebaseAuth.instance.signInAnonymously();
-      // print("yeh print huha");
-      // print(x);
+
       // Your additional logic after successful signup
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       // Handle errors here
-
       print('Firebase Authentication Error: ${e.code}, ${e.message}');
     } catch (e) {
       // Handle other errors
@@ -47,8 +80,9 @@ class ApplicationState extends ChangeNotifier {
   Future<void> signInWithFirebase(String email, String password) async {
     try {
       UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
-      // await _auth.signInWithEmailAndPassword(email: email, password: password);
+          // await FirebaseAuth.instance.signInAnonymously();
+          await _auth.signInWithEmailAndPassword(
+              email: email, password: password);
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       // Handle login errors here (e.g., invalid credentials)
