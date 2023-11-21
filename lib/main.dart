@@ -1,8 +1,32 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/firebase_options.dart';
 import 'package:flutter_application_1/networking/home_page.dart';
+import 'package:flutter_application_1/networking/login.dart';
+import 'package:flutter_application_1/networking/signup.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_application_1/networking/app_state.dart';
 
-void main() {
-  runApp(const MyApp());
+// void main() {
+//   runApp(const MyApp());
+// }
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  //GoogleSignIn().init();
+
+  // Initialize Firebase based on the current platform (web or other).
+  var x = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  print(x);
+
+  runApp(ChangeNotifierProvider(
+    create: (context) => ApplicationState(),
+    builder: ((context, child) => const MyApp()),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -43,7 +67,14 @@ class MyApp extends StatelessWidget {
       //System's theme setting or use the light/dark theme explicitly.
       themeMode: ThemeMode.system, // Or use ThemeMode.light or ThemeMode.dark
       // home: const MyHomePage(title: 'Flutter Demo Home Page: Minal'),
-      home: const HomeScreen(),
+      // home: const HomeScreen(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/signup': (context) => SignUpPage(),
+        '/homepage': (context) => HomeScreen(),
+      },
+      initialRoute: '/login',
+      home: const LoginPage(),
     );
   }
 }
