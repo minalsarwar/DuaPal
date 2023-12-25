@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/networking/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
 import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
@@ -316,20 +317,67 @@ class _HomeContentState extends State<HomeContent> {
   Widget buildMainContent() {
     return ListView(
       children: [
-        buildCard('Morning', 'android/assets/morning.jpg'),
-        buildCard('Evening', 'android/assets/evening.jpg'),
-        buildCard('Before Sleep', 'android/assets/beforeSleep.jpg'),
-        buildDoubleCard('Salah', 'android/assets/salah.jpg', 'After Salah',
-            'android/assets/afterSalah.jpg'),
-        buildCard('Ruqyah Healing', 'android/assets/ruqyah.jpg'),
-        buildDoubleCard('Praises of Allah', 'android/assets/praisesofAllah.jpg',
-            'Salawat', 'android/assets/salawat.jpg'),
-        buildDoubleCard('Quranic Duas', 'android/assets/quranicDuas.jpg',
-            'Sunnah Duas', 'android/assets/sunnahDuas.jpg'),
-        buildDoubleCard('Istagfar', 'android/assets/istagfar.jpg',
-            'Dhikr of All Times', 'android/assets/dhikr.jpg'),
-        buildCard('Names of Allah', 'android/assets/namesAllah.jpg'),
+        buildCard('Morning', 'android/assets/morning.jpg', () {
+          navigateToListView('Morning');
+        }),
+        buildCard('Evening', 'android/assets/evening.jpg', () {
+          navigateToListView('Evening');
+        }),
+        buildCard('Before Sleep', 'android/assets/beforeSleep.jpg', () {
+          navigateToListView('Before Sleep');
+        }),
+        buildDoubleCard(
+          'Salah',
+          'android/assets/salah.jpg',
+          'After Salah',
+          'android/assets/afterSalah.jpg',
+          () {
+            navigateToListView('Salah');
+          },
+        ),
+        buildCard('Ruqyah Healing', 'android/assets/ruqyah.jpg', () {
+          navigateToListView('Ruqyah Healing');
+        }),
+        buildDoubleCard(
+          'Praises of Allah',
+          'android/assets/praisesofAllah.jpg',
+          'Salawat',
+          'android/assets/salawat.jpg',
+          () {
+            navigateToListView('Praises of Allah & Salawat');
+          },
+        ),
+        buildDoubleCard(
+          'Quranic Duas',
+          'android/assets/quranicDuas.jpg',
+          'Sunnah Duas',
+          'android/assets/sunnahDuas.jpg',
+          () {
+            navigateToListView('Quranic Duas & Sunnah Duas');
+          },
+        ),
+        buildDoubleCard(
+          'Istagfar',
+          'android/assets/istagfar.jpg',
+          'Dhikr of All Times',
+          'android/assets/dhikr.jpg',
+          () {
+            navigateToListView('Istagfar & Dhikr of All Times');
+          },
+        ),
+        buildCard('Names of Allah', 'android/assets/namesAllah.jpg', () {
+          navigateToListView('Names of Allah');
+        }),
       ],
+    );
+  }
+
+  void navigateToListView(String title) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DuaListScreen(title: title),
+      ),
     );
   }
 
@@ -359,29 +407,87 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget buildCard(String title, String imageAsset) {
+  Widget buildCard(String title, String imageAsset, Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Card(
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Stack(
+              children: [
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    Colors.white.withOpacity(0.8),
+                    BlendMode.dstATop,
+                  ),
+                  child: Container(
+                    height: 110,
+                    width: double.infinity,
+                    child: Image.asset(
+                      imageAsset,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+
+  Widget buildDoubleCard(String title1, String imageAsset1, String title2,
+      String imageAsset2, Function() onTap) {
+    return Row(
+      children: [
+        Expanded(
+          child: buildCard(title1, imageAsset1, onTap),
+        ),
+        Expanded(
+          child: buildCard(title2, imageAsset2, onTap),
+        ),
+      ],
+    );
+  }
+
+  Widget buildGridCard(String title, String imageAsset) {
     return Card(
       margin: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius:
+            BorderRadius.circular(15.0), // Adjust the radius as needed
         child: Stack(
           children: [
-            ColorFiltered(
-              colorFilter: ColorFilter.mode(
-                Colors.white.withOpacity(0.8),
-                BlendMode.dstATop,
-              ),
-              child: Container(
-                height: 110,
-                width: double.infinity,
-                child: Image.asset(
-                  imageAsset,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            Image.asset(
+              imageAsset,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
             Positioned(
               bottom: 10,
@@ -407,59 +513,4 @@ class _HomeContentState extends State<HomeContent> {
       ),
     );
   }
-
-  Widget buildDoubleCard(
-      String title1, String imageAsset1, String title2, String imageAsset2) {
-    return Row(
-      children: [
-        Expanded(
-          child: buildCard(title1, imageAsset1),
-        ),
-        Expanded(
-          child: buildCard(title2, imageAsset2),
-        ),
-      ],
-    );
-  }
-}
-
-Widget buildGridCard(String title, String imageAsset) {
-  return Card(
-    margin: EdgeInsets.all(10),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(15.0), // Adjust the radius as needed
-      child: Stack(
-        children: [
-          Image.asset(
-            imageAsset,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-          Positioned(
-            bottom: 10,
-            left: 10,
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }

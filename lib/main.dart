@@ -6,7 +6,8 @@ import 'package:flutter_application_1/networking/login.dart';
 import 'package:flutter_application_1/networking/signup.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 // void main() {
 //   runApp(const MyApp());
 // }
@@ -75,6 +76,15 @@ class MyApp extends StatelessWidget {
       },
       initialRoute: '/login',
       home: const LoginPage(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ar'), // Arabic
+        Locale('en'), // English
+      ],
+      locale: const Locale('en'),
     );
   }
 }

@@ -105,52 +105,64 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
                     child: Row(
                       children: [
                         Icon(Icons.calendar_today), // Add calendar icon
-                        TextButton(
-                          onPressed: () async {
-                            final pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: selectedDate ?? DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                            );
-                            if (pickedDate != null) {
-                              setState(() {
-                                selectedDate = pickedDate;
-                              });
-                            }
-                          },
-                          child: Text(
-                            (selectedDate != null
-                                ? '${selectedDate!.day.toString().padLeft(2, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.year}'
-                                : 'Select a date'),
-                            style: const TextStyle(fontSize: 15),
+                        SizedBox(
+                            width: 8), // Add some space between icon and text
+                        Flexible(
+                          // Use Flexible to allow text to wrap
+                          child: TextButton(
+                            onPressed: () async {
+                              final pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate ?? DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                });
+                              }
+                            },
+                            child: Text(
+                              (selectedDate != null
+                                  ? '${selectedDate!.day.toString().padLeft(2, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.year}'
+                                  : 'Select a date'),
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 90),
+                  SizedBox(
+                      width:
+                          16), // Add some space between date and time pickers
                   Expanded(
                     child: Row(
                       children: [
                         Icon(Icons.access_time), // Add time icon
-                        TextButton(
-                          onPressed: () async {
-                            final pickedTime = await showTimePicker(
-                              context: context,
-                              initialTime: selectedTime ?? TimeOfDay.now(),
-                            );
-                            if (pickedTime != null) {
-                              setState(() {
-                                selectedTime = pickedTime;
-                              });
-                            }
-                          },
-                          child: Text(
-                            selectedTime != null
-                                ? selectedTime!.format(context)
-                                : 'Select a time',
-                            style: const TextStyle(fontSize: 15),
+                        SizedBox(
+                            width: 8), // Add some space between icon and text
+                        Flexible(
+                          // Use Flexible to allow text to wrap
+                          child: TextButton(
+                            onPressed: () async {
+                              final pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: selectedTime ?? TimeOfDay.now(),
+                              );
+                              if (pickedTime != null) {
+                                setState(() {
+                                  selectedTime = pickedTime;
+                                });
+                              }
+                            },
+                            child: Text(
+                              selectedTime != null
+                                  ? selectedTime!.format(context)
+                                  : 'Select a time',
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           ),
                         ),
                       ],
@@ -264,7 +276,7 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
 
               Center(
                 child: Container(
-                  width: 75,
+                  width: 90,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
