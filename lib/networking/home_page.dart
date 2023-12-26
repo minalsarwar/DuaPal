@@ -340,7 +340,7 @@ class _HomeContentState extends State<HomeContent> {
         }),
         buildDoubleCard(
           'Praises of Allah',
-          'android/assets/praisesofAllah.jpg',
+          'android/assets/praisesOfAllah.jpg',
           'Salawat',
           'android/assets/salawat.jpg',
           () {

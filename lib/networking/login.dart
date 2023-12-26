@@ -49,8 +49,8 @@ class _LoginPageState extends State<LoginPage> {
             // ),
             Container(
               width: double.infinity,
-              child: Image.network(
-                'https://img.freepik.com/free-vector/hand-drawn-flat-design-tasbih-illustration_23-2149275536.jpg?w=740&t=st=1700404835~exp=1700405435~hmac=c205e72af8ea323f74f11d8f0bfaf195f35d55dda2dabac58e52fbb28e1be16a',
+              child: Image.asset(
+                'android/assets/login.jpg', // Make sure 'login.jpg' is placed inside the 'assets' folder
                 fit: BoxFit.cover,
               ),
             ),

@@ -89,8 +89,6 @@ flutter:
     - android/assets/evening.jpg
     - android/assets/beforeSleep.jpg
     - android/assets/salah.jpg
-    - android/assets/afterSalah.jpg
-    - android/assets/praisesofAllah.jpg
     - android/assets/salawat.jpg
     - android/assets/quranicDuas.jpg
     - android/assets/sunnahDuas.jpg
@@ -120,6 +118,9 @@ flutter:
     - android/assets/appLogo.png
     - android/assets/gaza.jpg
     - android/assets/tasbih.png
+    - android/assets/login.jpg
+    - android/assets/afterSalah.jpg
+    - android/assets/praisesOfAllah.jpg
     
 
 
