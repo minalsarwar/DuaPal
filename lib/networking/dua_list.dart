@@ -111,10 +111,69 @@
 //   }
 // }
 
+// import 'package:flutter/material.dart';
+// import 'package:flutter_application_1/networking/dua_detail.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_application_1/provider.dart';
+
+// class DuaListScreen extends ConsumerWidget {
+//   final String title;
+
+//   const DuaListScreen({required this.title});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final duaList = ref.watch(duaListProvider);
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(title),
+//         backgroundColor: Color.fromARGB(255, 113, 176, 205),
+//         centerTitle: true,
+//       ),
+//       body: duaList.when(
+//         loading: () => CircularProgressIndicator(),
+//         error: (error, stack) => Text('Error: $error'),
+//         data: (duas) {
+//           return ListView.builder(
+//             itemCount: duas.length,
+//             itemBuilder: (context, index) {
+//               final dua = duas[index];
+//               return GestureDetector(
+//                 onTap: () {
+//                   // Navigate to the detail screen when a card is tapped
+//                   Navigator.push(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (context) => DetailScreen(
+//                         id: dua.id, // Pass the document ID as the title
+//                         title: dua.title,
+//                         arabic: dua.arabic,
+//                         transliteration: dua.transliteration,
+//                         translation: dua.translation,
+//                         source: dua.source,
+//                         count: dua.count,
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 child: CardItem(
+//                   itemCount: index + 1, // Item count starts from 1
+//                   title: dua.title,
+//                 ),
+//               );
+//             },
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/networking/dua_detail.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/provider.dart';
+import 'package:flutter_application_1/provider.dart'; // Import your providers here
 
 class DuaListScreen extends ConsumerWidget {
   final String title;
@@ -123,6 +182,10 @@ class DuaListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Update the title
+    ref.read(duaListTitleProvider.notifier).state = title;
+
+    // Watch duaListProvider after updating the title
     final duaList = ref.watch(duaListProvider);
 
     return Scaffold(
@@ -169,6 +232,8 @@ class DuaListScreen extends ConsumerWidget {
     );
   }
 }
+
+// Your CardItem widget and other parts remain unchanged
 
 class CardItem extends StatelessWidget {
   final int itemCount;

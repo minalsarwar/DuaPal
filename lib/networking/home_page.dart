@@ -5,7 +5,10 @@ import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
 import 'package:flutter_application_1/networking/settings.dart';
+import 'package:flutter_application_1/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -62,10 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 113, 176, 205),
+        backgroundColor: Color.fromARGB(203, 61, 179, 169),
         title: Text(
           appBarTitle,
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,
         actions: [
@@ -208,17 +211,120 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatefulWidget {
-  @override
-  _HomeContentState createState() => _HomeContentState();
-}
+// class HomeContent extends StatefulWidget {
+//   @override
+//   _HomeContentState createState() => _HomeContentState();
+// }
 
-class _HomeContentState extends State<HomeContent> {
-  int _currentIndex = 0;
-  bool isMainSelected = true;
+// class _HomeContentState extends State<HomeContent> {
+//   int _currentIndex = 0;
+//   bool isMainSelected = true;
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Container(
+//           constraints: BoxConstraints(maxWidth: 200),
+//           padding: EdgeInsets.symmetric(vertical: 4.0),
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(30.0),
+//           ),
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       isMainSelected = true;
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     primary: isMainSelected
+//                         ? Color.fromARGB(255, 113, 176, 205)
+//                         : Colors.white,
+//                     elevation: 0,
+//                     padding: EdgeInsets.all(2),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.only(
+//                         topLeft: Radius.circular(30),
+//                         bottomLeft: Radius.circular(30),
+//                       ),
+//                     ),
+//                   ),
+//                   child: Ink(
+//                     child: Container(
+//                       alignment: Alignment.center,
+//                       child: Text(
+//                         'Main',
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           fontWeight: isMainSelected
+//                               ? FontWeight.bold
+//                               : FontWeight.normal,
+//                           color: isMainSelected ? Colors.white : Colors.black,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     setState(() {
+//                       isMainSelected = false;
+//                     });
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     primary: !isMainSelected
+//                         ? Color.fromARGB(255, 113, 176, 205)
+//                         : Colors.white,
+//                     elevation: 0,
+//                     padding: EdgeInsets.all(2),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.only(
+//                         topRight: Radius.circular(30),
+//                         bottomRight: Radius.circular(30),
+//                       ),
+//                     ),
+//                   ),
+//                   child: Ink(
+//                     child: Container(
+//                       alignment: Alignment.center,
+//                       child: Text(
+//                         'Other',
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           fontWeight: !isMainSelected
+//                               ? FontWeight.bold
+//                               : FontWeight.normal,
+//                           color: !isMainSelected ? Colors.white : Colors.black,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         Expanded(
+//           child: isMainSelected
+//               ? buildMainContent(context.read())
+//               : buildOtherContent(),
+//         ),
+//       ],
+//     );
+//   }
+
+class HomeContent extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    int _currentIndex = 0;
+    bool isMainSelected = ref.watch(isMainSelectedProvider);
+
     return Column(
       children: [
         Container(
@@ -233,9 +339,7 @@ class _HomeContentState extends State<HomeContent> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      isMainSelected = true;
-                    });
+                    ref.read(isMainSelectedProvider.notifier).state = true;
                   },
                   style: ElevatedButton.styleFrom(
                     primary: isMainSelected
@@ -270,9 +374,7 @@ class _HomeContentState extends State<HomeContent> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      isMainSelected = false;
-                    });
+                    ref.read(isMainSelectedProvider.notifier).state = false;
                   },
                   style: ElevatedButton.styleFrom(
                     primary: !isMainSelected
@@ -308,23 +410,24 @@ class _HomeContentState extends State<HomeContent> {
           ),
         ),
         Expanded(
-          child: isMainSelected ? buildMainContent() : buildOtherContent(),
+          child:
+              isMainSelected ? buildMainContent(ref) : buildOtherContent(ref),
         ),
       ],
     );
   }
 
-  Widget buildMainContent() {
+  Widget buildMainContent(WidgetRef ref) {
     return ListView(
       children: [
         buildCard('Morning', 'android/assets/morning.jpg', () {
-          navigateToListView('Morning');
+          navigateToListView('Morning', ref);
         }),
         buildCard('Evening', 'android/assets/evening.jpg', () {
-          navigateToListView('Evening');
+          navigateToListView('Evening', ref);
         }),
         buildCard('Before Sleep', 'android/assets/beforeSleep.jpg', () {
-          navigateToListView('Before Sleep');
+          navigateToListView('Before Sleep', ref);
         }),
         buildDoubleCard(
           'Salah',
@@ -332,11 +435,14 @@ class _HomeContentState extends State<HomeContent> {
           'After Salah',
           'android/assets/afterSalah.jpg',
           () {
-            navigateToListView('Salah');
+            navigateToListView('Salah', ref);
+          },
+          () {
+            navigateToListView('After Salah', ref);
           },
         ),
         buildCard('Ruqyah Healing', 'android/assets/ruqyah.jpg', () {
-          navigateToListView('Ruqyah Healing');
+          navigateToListView('Ruqyah Healing', ref);
         }),
         buildDoubleCard(
           'Praises of Allah',
@@ -344,7 +450,10 @@ class _HomeContentState extends State<HomeContent> {
           'Salawat',
           'android/assets/salawat.jpg',
           () {
-            navigateToListView('Praises of Allah & Salawat');
+            navigateToListView('Praises of Allah', ref);
+          },
+          () {
+            navigateToListView('Salawat', ref);
           },
         ),
         buildDoubleCard(
@@ -353,7 +462,10 @@ class _HomeContentState extends State<HomeContent> {
           'Sunnah Duas',
           'android/assets/sunnahDuas.jpg',
           () {
-            navigateToListView('Quranic Duas & Sunnah Duas');
+            navigateToListView('Quranic Duas', ref);
+          },
+          () {
+            navigateToListView('Sunnah Duas', ref);
           },
         ),
         buildDoubleCard(
@@ -362,47 +474,123 @@ class _HomeContentState extends State<HomeContent> {
           'Dhikr of All Times',
           'android/assets/dhikr.jpg',
           () {
-            navigateToListView('Istagfar & Dhikr of All Times');
+            navigateToListView('Istagfar', ref);
+          },
+          () {
+            navigateToListView('Dhikr of All Times', ref);
           },
         ),
         buildCard('Names of Allah', 'android/assets/namesAllah.jpg', () {
-          navigateToListView('Names of Allah');
+          navigateToListView('Names of Allah', ref);
         }),
       ],
     );
   }
 
-  void navigateToListView(String title) {
+  // void navigateToListView(String title) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => DuaListScreen(title: title),
+  //     ),
+  //   );
+  // }
+
+  void navigateToListView(String title, WidgetRef ref) {
+    ref.read(isEmotionTileSelectedProvider.notifier).state = false;
+    ref.read(duaListTitleProvider.notifier).state = title;
     Navigator.push(
-      context,
+      ref.context,
       MaterialPageRoute(
         builder: (context) => DuaListScreen(title: title),
       ),
     );
   }
 
-  Widget buildOtherContent() {
+  // Widget buildOtherContent() {
+  //   return GridView.count(
+  //     crossAxisCount: 2,
+  //     children: [
+  //       buildGridCard('Waking Up', 'android/assets/wakingup.jpg'),
+  //       buildGridCard('Nightmares', 'android/assets/nightmares.jpg'),
+  //       buildGridCard('Clothes', 'android/assets/clothes.jpg'),
+  //       buildGridCard('Lavatory & Wudu', 'android/assets/wudu.jpg'),
+  //       buildGridCard('Food & Drink', 'android/assets/food.jpg'),
+  //       buildGridCard('Home', 'android/assets/home.jpg'),
+  //       buildGridCard('Adhan & Masjid', 'android/assets/masjid.jpg'),
+  //       buildGridCard('Istikharah', 'android/assets/istikhara.jpg'),
+  //       buildGridCard('Gatherings', 'android/assets/gatherings.jpg'),
+  //       buildGridCard('Trials & Blessings', 'android/assets/emotions.jpg'),
+  //       buildGridCard('Protection of Iman', 'android/assets/iman.jpg'),
+  //       buildGridCard('Hajj & Umrah', 'android/assets/hajj.jpg'),
+  //       buildGridCard('Travel', 'android/assets/travel.jpg'),
+  //       buildGridCard('Money & Shopping', 'android/assets/shopping.jpg'),
+  //       buildGridCard('Social Interactions', 'android/assets/social.jpg'),
+  //       buildGridCard('Marriage', 'android/assets/marriage.jpg'),
+  //       buildGridCard('Death', 'android/assets/death.jpg'),
+  //       buildGridCard('Nature', 'android/assets/nature.jpg'),
+  //     ],
+  //   );
+  // }
+
+  Widget buildOtherContent(WidgetRef ref) {
     return GridView.count(
       crossAxisCount: 2,
       children: [
-        buildGridCard('Waking Up', 'android/assets/wakingup.jpg'),
-        buildGridCard('Nightmares', 'android/assets/nightmares.jpg'),
-        buildGridCard('Clothes', 'android/assets/clothes.jpg'),
-        buildGridCard('Lavatory & Wudu', 'android/assets/wudu.jpg'),
-        buildGridCard('Food & Drink', 'android/assets/food.jpg'),
-        buildGridCard('Home', 'android/assets/home.jpg'),
-        buildGridCard('Adhan & Masjid', 'android/assets/masjid.jpg'),
-        buildGridCard('Istikharah', 'android/assets/istikhara.jpg'),
-        buildGridCard('Gatherings', 'android/assets/gatherings.jpg'),
-        buildGridCard('Trials & Blessings', 'android/assets/emotions.jpg'),
-        buildGridCard('Protection of Iman', 'android/assets/iman.jpg'),
-        buildGridCard('Hajj & Umrah', 'android/assets/hajj.jpg'),
-        buildGridCard('Travel', 'android/assets/travel.jpg'),
-        buildGridCard('Money & Shopping', 'android/assets/shopping.jpg'),
-        buildGridCard('Social Interactions', 'android/assets/social.jpg'),
-        buildGridCard('Marriage', 'android/assets/marriage.jpg'),
-        buildGridCard('Death', 'android/assets/death.jpg'),
-        buildGridCard('Nature', 'android/assets/nature.jpg'),
+        buildGridCard('Waking Up', 'android/assets/wakingup.jpg', () {
+          navigateToListView('Waking Up', ref);
+        }),
+        buildGridCard('Nightmares', 'android/assets/nightmares.jpg', () {
+          navigateToListView('Nightmares', ref);
+        }),
+        buildGridCard('Clothes', 'android/assets/clothes.jpg', () {
+          navigateToListView('Clothes', ref);
+        }),
+        buildGridCard('Lavatory & Wudu', 'android/assets/wudu.jpg', () {
+          navigateToListView('Lavatory & Wudu', ref);
+        }),
+        buildGridCard('Food & Drink', 'android/assets/food.jpg', () {
+          navigateToListView('Food & Drink', ref);
+        }),
+        buildGridCard('Home', 'android/assets/home.jpg', () {
+          navigateToListView('Home', ref);
+        }),
+        buildGridCard('Adhan & Masjid', 'android/assets/masjid.jpg', () {
+          navigateToListView('Adhan & Masjid', ref);
+        }),
+        buildGridCard('Istikharah', 'android/assets/istikhara.jpg', () {
+          navigateToListView('Istikharah', ref);
+        }),
+        buildGridCard('Gatherings', 'android/assets/gatherings.jpg', () {
+          navigateToListView('Gatherings', ref);
+        }),
+        buildGridCard('Trials & Blessings', 'android/assets/emotions.jpg', () {
+          navigateToListView('Trials & Blessings', ref);
+        }),
+        buildGridCard('Protection of Iman', 'android/assets/iman.jpg', () {
+          navigateToListView('Protection of Iman', ref);
+        }),
+        buildGridCard('Hajj & Umrah', 'android/assets/hajj.jpg', () {
+          navigateToListView('Hajj & Umrah', ref);
+        }),
+        buildGridCard('Travel', 'android/assets/travel.jpg', () {
+          navigateToListView('Travel', ref);
+        }),
+        buildGridCard('Money & Shopping', 'android/assets/shopping.jpg', () {
+          navigateToListView('Money & Shopping', ref);
+        }),
+        buildGridCard('Social Interactions', 'android/assets/social.jpg', () {
+          navigateToListView('Social Interactions', ref);
+        }),
+        buildGridCard('Marriage', 'android/assets/marriage.jpg', () {
+          navigateToListView('Marriage', ref);
+        }),
+        buildGridCard('Death', 'android/assets/death.jpg', () {
+          navigateToListView('Death', ref);
+        }),
+        buildGridCard('Nature', 'android/assets/nature.jpg', () {
+          navigateToListView('Nature', ref);
+        }),
       ],
     );
   }
@@ -459,58 +647,60 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget buildDoubleCard(String title1, String imageAsset1, String title2,
-      String imageAsset2, Function() onTap) {
+      String imageAsset2, Function() onTap1, Function() onTap2) {
     return Row(
       children: [
         Expanded(
-          child: buildCard(title1, imageAsset1, onTap),
+          child: buildCard(title1, imageAsset1, onTap1),
         ),
         Expanded(
-          child: buildCard(title2, imageAsset2, onTap),
+          child: buildCard(title2, imageAsset2, onTap2),
         ),
       ],
     );
   }
 
-  Widget buildGridCard(String title, String imageAsset) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(15.0), // Adjust the radius as needed
-        child: Stack(
-          children: [
-            Image.asset(
-              imageAsset,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-            Positioned(
-              bottom: 10,
-              left: 10,
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(10.0),
+  Widget buildGridCard(String title, String imageAsset, Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Card(
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: ClipRRect(
+            borderRadius:
+                BorderRadius.circular(15.0), // Adjust the radius as needed
+            child: Stack(
+              children: [
+                Image.asset(
+                  imageAsset,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
                 ),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
