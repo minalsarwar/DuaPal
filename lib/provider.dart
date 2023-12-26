@@ -84,3 +84,41 @@ final isMainSelectedProvider = StateProvider<bool>((ref) {
 // final isPasswordVisibleProvider = StateProvider<bool>((ref) {
 //   return false;
 // });
+
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, List<String>>((ref) {
+  return FavoritesNotifier();
+});
+
+class FavoritesNotifier extends StateNotifier<List<String>> {
+  FavoritesNotifier() : super([]);
+
+  void removeFromFavorites(String duaId) {
+    print('Removing dua from favorites with ID: $duaId');
+
+    FirebaseFirestore.instance
+        .collection('favorites')
+        .where('user_id', isEqualTo: AuthService().getUserId())
+        .where('dua_id', isEqualTo: duaId)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        snapshot.docs.first.reference.delete();
+
+        state = state.where((id) => id != duaId).toList();
+      }
+    });
+  }
+
+  void addToFavorites(String duaId) {
+    FirebaseFirestore.instance.collection('favorites').add({
+      'user_id': AuthService().getUserId(),
+      'dua_id': duaId,
+    }).then((_) {
+      // Add to state
+      state = [...state, duaId];
+    });
+  }
+}
+
+final detailTitleProvider = StateProvider<String?>((ref) => null);

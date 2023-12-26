@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/networking/app_state.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title;
@@ -20,6 +21,15 @@ class DetailScreen extends StatefulWidget {
       required this.translation,
       required this.source,
       required this.count});
+
+  DetailScreen.fromSnapshot(DocumentSnapshot snapshot)
+      : title = snapshot['title'],
+        id = snapshot.id, // Use the document ID directly
+        arabic = snapshot['arabic'],
+        transliteration = snapshot['transliteration'],
+        translation = snapshot['translation'],
+        source = snapshot['source'],
+        count = snapshot['count'];
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -43,6 +53,65 @@ class _DetailScreenState extends State<DetailScreen> {
     source = widget.source;
     count = widget.count;
     originalCount = count;
+  }
+
+  bool isFavorite = false;
+
+  Future<void> toggleFavoriteStatus() async {
+    String? userId = await AuthService().getUserId();
+    if (userId != null) {
+      String duaId = widget.id;
+
+      // Check if the dua is already a favorite
+      bool isAlreadyFavorite = await isDuaFavorite(userId, duaId);
+
+      // Toggle the favorite status
+      if (isAlreadyFavorite) {
+        removeFromFavorites(userId, duaId);
+      } else {
+        addToFavorites(userId, duaId);
+      }
+
+      // Update the UI
+      setState(() {
+        isFavorite = !isAlreadyFavorite;
+      });
+    }
+  }
+
+  Future<bool> isDuaFavorite(String userId, String duaId) async {
+    // Check if the dua is in the user's favorites collection
+    QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
+        .collection('favorites')
+        .where('user_id', isEqualTo: userId)
+        .where('dua_id', isEqualTo: duaId)
+        .get();
+
+    return favoritesSnapshot.docs.isNotEmpty;
+  }
+
+  Future<void> addToFavorites(String userId, String duaId) async {
+    // Add the dua to the user's favorites collection
+    await FirebaseFirestore.instance.collection('favorites').add({
+      'user_id': userId,
+      'dua_id': duaId,
+    });
+  }
+
+  Future<void> removeFromFavorites(String userId, String duaId) async {
+    // Remove the dua from the user's favorites collection
+    QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
+        .collection('favorites')
+        .where('user_id', isEqualTo: userId)
+        .where('dua_id', isEqualTo: duaId)
+        .get();
+
+    if (favoritesSnapshot.docs.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(favoritesSnapshot.docs.first.id)
+          .delete();
+    }
   }
 
   @override
@@ -171,7 +240,13 @@ class _DetailScreenState extends State<DetailScreen> {
             label: 'Share',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
+            icon: IconButton(
+              icon: Icon(Icons.favorite),
+              color: isFavorite ? Colors.red : null,
+              onPressed: () {
+                toggleFavoriteStatus();
+              },
+            ),
             label: 'Favorite',
           ),
         ],
@@ -231,4 +306,5 @@ class _DetailScreenState extends State<DetailScreen> {
       //   shadowColor: Colors.grey,
       //   elevation: 5,
       // ),
+ 
  

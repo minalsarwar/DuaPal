@@ -1,173 +1,279 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter/material.dart';
+// import 'package:flutter_application_1/networking/app_state.dart';
+// import 'package:flutter_application_1/networking/dua_detail.dart';
+// import 'package:flutter_application_1/provider.dart';
 
-// class FavoritesScreen extends StatelessWidget {
+// class FavoritesScreen extends StatefulWidget {
+//   @override
+//   _FavoritesScreenState createState() => _FavoritesScreenState();
+// }
+
+// class _FavoritesScreenState extends State<FavoritesScreen> {
+//   String? detailTitle;
+
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(
-//       child: Column(
-//         children: [
-//           Container(
-//             decoration: BoxDecoration(
-//               color: Colors.grey[100],
-//               borderRadius: BorderRadius.circular(20.0),
-//             ),
-//             margin: EdgeInsets.all(16.0),
-//             padding: EdgeInsets.symmetric(horizontal: 16.0),
-//             child: Row(
-//               children: [
-//                 Expanded(
-//                   child: TextField(
-//                     decoration: InputDecoration(
-//                       hintText: 'Search',
-//                       border: InputBorder.none,
-//                     ),
-//                   ),
-//                 ),
-//                 Icon(Icons.search),
-//               ],
-//             ),
-//           ),
-//           Expanded(
-//             child: ListView.builder(
-//               itemCount: 2,
-//               itemBuilder: (context, index) {
-//                 return ListTile(
-//                   leading: Icon(Icons.folder_open),
-//                   title: Text(index == 0 ? 'Thank you Allah' : 'Tawakkul'),
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => FavoritesDetailScreen(
-//                           title: index == 0 ? 'Thank you Allah' : 'Tawakkul',
-//                         ),
-//                       ),
+//     return WillPopScope(
+//       onWillPop: () async {
+//         if (detailTitle != null) {
+//           // If a detail screen is shown, navigate back to the main screen
+//           setState(() {
+//             detailTitle = null;
+//           });
+//           return false; // Prevent the default back button behavior
+//         }
+//         return true; // Allow the default back button behavior (e.g., exit the app)
+//       },
+//       child: Container(
+//         child: detailTitle == null
+//             ? buildMainContent()
+//             : buildDetailContent(detailTitle!),
+//       ),
+//     );
+//   }
+
+//   Widget buildMainContent() {
+//     return FutureBuilder(
+//       future: fetchUserFavorites(),
+//       builder: (context, AsyncSnapshot<List<DetailScreen>> snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return CircularProgressIndicator();
+//         } else if (snapshot.hasError) {
+//           return Text('Error: ${snapshot.error}');
+//         } else {
+//           return Column(
+//             children: [
+//               Expanded(
+//                 child: ListView.builder(
+//                   itemCount: snapshot.data?.length ?? 0,
+//                   itemBuilder: (context, index) {
+//                     return FavoriteDuaTile(
+//                       duaDetailModel: snapshot.data![index],
+//                       onRemove: () {
+//                         // Implement the logic to remove dua from favorites
+//                         removeFromFavorites(snapshot.data![index].id);
+//                       },
 //                     );
 //                   },
-//                 );
-//               },
+//                 ),
+//               ),
+//             ],
+//           );
+//         }
+//       },
+//     );
+//   }
+
+//   Future<List<DetailScreen>> fetchUserFavorites() async {
+//     String? userId = await AuthService().getUserId();
+//     if (userId != null) {
+//       QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
+//           .collection('favorites')
+//           .where('user_id', isEqualTo: userId)
+//           .get();
+
+//       List<String> favoriteDuaIds = favoritesSnapshot.docs
+//           .map((doc) => doc['dua_id'].toString())
+//           .toList();
+
+//       // Fetch dua details using dua IDs
+//       List<DetailScreen> favoriteDuas = [];
+//       for (String duaId in favoriteDuaIds) {
+//         DocumentSnapshot duaDetailSnapshot = await FirebaseFirestore.instance
+//             .collection('dua_detail')
+//             .doc(duaId)
+//             .get();
+
+//         DetailScreen duaDetailModel =
+//             DetailScreen.fromSnapshot(duaDetailSnapshot);
+//         favoriteDuas.add(duaDetailModel);
+//       }
+
+//       return favoriteDuas;
+//     } else {
+//       return [];
+//     }
+//   }
+
+//   void removeFromFavorites(String duaId) {
+//     // Implement the logic to remove the dua from favorites collection
+//     Future<String?> userId = AuthService().getUserId();
+//     print('Removing dua from favorites with ID: $duaId');
+//     if (userId != null) {
+//       FirebaseFirestore.instance
+//           .collection('favorites')
+//           .where('user_id', isEqualTo: userId)
+//           .where('dua_id', isEqualTo: duaId)
+//           .get()
+//           .then((QuerySnapshot snapshot) {
+//         if (snapshot.docs.isNotEmpty) {
+//           snapshot.docs.first.reference.delete();
+//         }
+//       });
+//     }
+//   }
+
+//   Widget buildDetailContent(String title) {
+//     return Column(
+//       children: [
+//         Container(
+//           margin: EdgeInsets.all(16.0),
+//           child: Text(
+//             title,
+//             style: TextStyle(
+//               fontSize: 20,
+//               fontWeight: FontWeight.bold,
 //             ),
 //           ),
-//         ],
-//       ),
+//         ),
+//         Expanded(
+//           child: ListView.builder(
+//             itemCount: 5,
+//             itemBuilder: (context, index) {
+//               return ListTile(
+//                 leading: Icon(Icons.favorite_sharp, color: Colors.red),
+//                 title: Text('Dua ${index + 1}'),
+//               );
+//             },
+//           ),
+//         ),
+//       ],
 //     );
 //   }
 // }
 
-// class FavoritesDetailScreen extends StatelessWidget {
-//   final String title;
+// class FavoriteDuaTile extends StatelessWidget {
+//   final DetailScreen duaDetailModel;
+//   final VoidCallback onRemove;
 
-//   FavoritesDetailScreen({required this.title});
+//   FavoriteDuaTile({required this.duaDetailModel, required this.onRemove});
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(
-//       child: Column(
-//         children: [
-//           Container(
-//             margin: EdgeInsets.all(16.0),
-//             child: Text(
-//               title,
-//               style: TextStyle(
-//                 fontSize: 20,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//           Expanded(
-//             child: ListView.builder(
-//               itemCount: 5, // Number of card tiles
-//               itemBuilder: (context, index) {
-//                 return ListTile(
-//                   leading: Icon(Icons.folder_open),
-//                   title: Text('Dua ${index + 1}'),
-//                   // Add onTap functionality here
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
+//     return ListTile(
+//       title: Text(duaDetailModel.title),
+//       trailing: IconButton(
+//         icon: Icon(Icons.favorite, color: Colors.red),
+//         onPressed: onRemove,
 //       ),
+//       onTap: () {
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) => DetailScreen(
+//               title: duaDetailModel.title,
+//               id: duaDetailModel.id,
+//               arabic: duaDetailModel.arabic,
+//               transliteration: duaDetailModel.transliteration,
+//               translation: duaDetailModel.translation,
+//               source: duaDetailModel.source,
+//               count: duaDetailModel.count,
+//             ),
+//           ),
+//         );
+//       },
 //     );
 //   }
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:flutter_application_1/networking/dua_detail.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_application_1/provider.dart';
 
-class FavoritesScreen extends StatefulWidget {
+class FavoritesScreen extends ConsumerWidget {
   @override
-  _FavoritesScreenState createState() => _FavoritesScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    String? detailTitle;
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  String? detailTitle;
-
-  @override
-  Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         if (detailTitle != null) {
           // If a detail screen is shown, navigate back to the main screen
-          setState(() {
-            detailTitle = null;
-          });
+          ref.read(detailTitleProvider.notifier).state = null;
           return false; // Prevent the default back button behavior
         }
         return true; // Allow the default back button behavior (e.g., exit the app)
       },
       child: Container(
         child: detailTitle == null
-            ? buildMainContent()
-            : buildDetailContent(detailTitle!),
+            ? buildMainContent(ref)
+            : buildDetailContent(detailTitle!, ref),
       ),
     );
   }
 
-  Widget buildMainContent() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          margin: EdgeInsets.all(16.0),
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
+  Widget buildMainContent(WidgetRef ref) {
+    return FutureBuilder(
+      future: fetchUserFavorites(ref),
+      builder: (context, AsyncSnapshot<List<DetailScreen>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return Column(
             children: [
               Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    border: InputBorder.none,
-                  ),
+                child: ListView.builder(
+                  itemCount: snapshot.data?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return FavoriteDuaTile(
+                      duaDetailModel: snapshot.data![index],
+                      onRemove: () {
+                        ref
+                            .read(favoritesProvider.notifier)
+                            .removeFromFavorites(snapshot.data![index].id);
+                        // ref
+                        //     .read(favoritesProvider.notifier)
+                        //     .removeFromFavorites(snapshot.data![index].id);
+                      },
+                    );
+                  },
                 ),
               ),
-              Icon(Icons.search),
             ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: Icon(Icons.folder_open),
-                title: Text(index == 0 ? 'Thank you Allah' : 'Tawakkul'),
-                onTap: () {
-                  setState(() {
-                    detailTitle = index == 0 ? 'Thank you Allah' : 'Tawakkul';
-                  });
-                },
-              );
-            },
-          ),
-        ),
-      ],
+          );
+        }
+      },
     );
   }
 
-  Widget buildDetailContent(String title) {
+  Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
+    String? userId = await AuthService().getUserId();
+    if (userId != null) {
+      QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
+          .collection('favorites')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      List<String> favoriteDuaIds = favoritesSnapshot.docs
+          .map((doc) => doc['dua_id'].toString())
+          .toList();
+
+      // Fetch dua details using dua IDs
+      List<DetailScreen> favoriteDuas = [];
+      for (String duaId in favoriteDuaIds) {
+        DocumentSnapshot duaDetailSnapshot = await FirebaseFirestore.instance
+            .collection('dua_detail')
+            .doc(duaId)
+            .get();
+
+        DetailScreen duaDetailModel =
+            DetailScreen.fromSnapshot(duaDetailSnapshot);
+        favoriteDuas.add(duaDetailModel);
+      }
+
+      return favoriteDuas;
+    } else {
+      return [];
+    }
+  }
+
+  Widget buildDetailContent(String title, WidgetRef ref) {
     return Column(
       children: [
         Container(
@@ -182,17 +288,90 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: 5, // Number of card tiles
+            itemCount: 5,
             itemBuilder: (context, index) {
               return ListTile(
                 leading: Icon(Icons.favorite_sharp, color: Colors.red),
                 title: Text('Dua ${index + 1}'),
-                // Add onTap functionality here
               );
             },
           ),
         ),
       ],
     );
+  }
+}
+
+class FavoriteDuaTile extends StatelessWidget {
+  final DetailScreen duaDetailModel;
+  final VoidCallback onRemove;
+
+  FavoriteDuaTile({required this.duaDetailModel, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return ListTile(
+          title: Text(duaDetailModel.title),
+          // trailing: IconButton(
+          //   icon: Icon(
+          //     Icons.favorite,
+          //     color: ref.read(favoritesProvider).contains(duaDetailModel.id)
+          //         ? Colors.red
+          //         : Colors.grey,
+          //   ),
+          //   onPressed: () async {
+          //     await onRemoveAsync(duaDetailModel.id, context, ref);
+          //   },
+          // ),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              // await onRemoveAsync(duaDetailModel.id, context, ref);
+              onRemove();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Dua removed from favorites'),
+                ),
+              );
+            },
+          ),
+          onTap: () {
+            // ref.read(detailTitleProvider.notifier).state = duaDetailModel.title;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailScreen(
+                  title: duaDetailModel.title,
+                  id: duaDetailModel.id,
+                  arabic: duaDetailModel.arabic,
+                  transliteration: duaDetailModel.transliteration,
+                  translation: duaDetailModel.translation,
+                  source: duaDetailModel.source,
+                  count: duaDetailModel.count,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Future<void> onRemoveAsync(WidgetRef ref) async {
+  //   // Execute the original onRemove logic
+  //   onRemove();
+
+  //   // If needed, you can update the UI here after the asynchronous operation
+  //   // For example, you might want to refresh the state or show a snackbar
+  // }
+
+  Future<void> onRemoveAsync(
+      String duaId, BuildContext context, WidgetRef ref) async {
+    ref.read(favoritesProvider.notifier).removeFromFavorites(duaId);
   }
 }
