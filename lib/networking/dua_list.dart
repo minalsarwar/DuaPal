@@ -146,7 +146,7 @@ class DuaListScreen extends ConsumerWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => DetailScreen(
-                        id: dua.id, // Pass the document ID as the title
+                        id: dua.id,
                         title: dua.title,
                         arabic: dua.arabic,
                         transliteration: dua.transliteration,

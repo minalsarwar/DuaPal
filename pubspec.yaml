@@ -61,6 +61,7 @@ dependencies:
   intl: ^0.18.1
   circle_nav_bar: ^2.0.1+1
   flutter_riverpod: ^2.4.9
+  golden_toolkit: ^0.15.0
 
 dev_dependencies:
   flutter_test:
