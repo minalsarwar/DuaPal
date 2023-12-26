@@ -171,6 +171,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/dua_detail.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/provider.dart'; // Import your providers here
@@ -195,7 +196,11 @@ class DuaListScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: duaList.when(
-        loading: () => CircularProgressIndicator(),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
+          ),
+        ),
         error: (error, stack) => Text('Error: $error'),
         data: (duas) {
           return ListView.builder(

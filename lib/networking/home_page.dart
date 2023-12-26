@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
 import 'package:flutter_application_1/networking/favorites.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: Colors.transparent,
               child: Icon(
                 iconData,
-                color: Color.fromARGB(255, 113, 176, 205),
+                color: CustomColors.mainColor,
               ),
             ),
           ),
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(203, 61, 179, 169),
+        backgroundColor: CustomColors.mainColor,
         title: Text(
           appBarTitle,
           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -127,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.chat_bubble_outline,
-                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+                  size: 28, color: CustomColors.mainColor),
               title: Text('Feedback', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle Feedback action
@@ -135,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.help_outline_rounded,
-                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+                  size: 28, color: CustomColors.mainColor),
               title: Text('FAQs', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle FAQs action
@@ -143,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: Icon(Icons.info_outline_rounded,
-                  size: 28, color: Color.fromARGB(255, 113, 176, 205)),
+                  size: 28, color: CustomColors.mainColor),
               title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
               onTap: () {
                 // Handle FAQs action
@@ -174,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : HomeContent(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Color.fromARGB(255, 113, 176, 205),
+        selectedItemColor: CustomColors.mainColor,
         unselectedItemColor: Colors.grey,
         selectedFontSize: 14,
         unselectedFontSize: 14,
@@ -342,9 +343,8 @@ class HomeContent extends ConsumerWidget {
                     ref.read(isMainSelectedProvider.notifier).state = true;
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: isMainSelected
-                        ? Color.fromARGB(255, 113, 176, 205)
-                        : Colors.white,
+                    primary:
+                        isMainSelected ? CustomColors.mainColor : Colors.white,
                     elevation: 0,
                     padding: EdgeInsets.all(2),
                     shape: RoundedRectangleBorder(
@@ -377,9 +377,8 @@ class HomeContent extends ConsumerWidget {
                     ref.read(isMainSelectedProvider.notifier).state = false;
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: !isMainSelected
-                        ? Color.fromARGB(255, 113, 176, 205)
-                        : Colors.white,
+                    primary:
+                        !isMainSelected ? CustomColors.mainColor : Colors.white,
                     elevation: 0,
                     padding: EdgeInsets.all(2),
                     shape: RoundedRectangleBorder(
