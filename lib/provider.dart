@@ -93,21 +93,59 @@ final favoritesProvider =
 class FavoritesNotifier extends StateNotifier<List<String>> {
   FavoritesNotifier() : super([]);
 
-  void removeFromFavorites(String duaId) {
+  // void removeFromFavorites(String duaId) {
+  //   print('Removing dua from favorites with ID: $duaId');
+
+  //   FirebaseFirestore.instance
+  //       .collection('favorites')
+  //       .where('user_id', isEqualTo: AuthService().getUserId())
+  //       .where('dua_id', isEqualTo: duaId)
+  //       .get()
+  //       .then((QuerySnapshot snapshot) {
+  //     if (snapshot.docs.isNotEmpty) {
+  //       snapshot.docs.first.reference.delete();
+
+  //       state = state.where((id) => id != duaId).toList();
+  //     }
+  //   });
+  // }
+
+//   void removeFromFavorites(String userId, String duaId) {
+//   print('Removing dua from favorites with ID: $duaId');
+
+//   FirebaseFirestore.instance
+//       .collection('favorites')
+//       .where('user_id', isEqualTo: userId)
+//       .where('dua_id', isEqualTo: duaId)
+//       .get()
+//       .then((QuerySnapshot snapshot) {
+//     if (snapshot.docs.isNotEmpty) {
+//       snapshot.docs.first.reference.delete();
+
+//       state = state.where((id) => id != duaId).toList();
+//     }
+//   });
+// }
+
+  void removeFromFavorites(String duaId) async {
     print('Removing dua from favorites with ID: $duaId');
 
-    FirebaseFirestore.instance
-        .collection('favorites')
-        .where('user_id', isEqualTo: AuthService().getUserId())
-        .where('dua_id', isEqualTo: duaId)
-        .get()
-        .then((QuerySnapshot snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        snapshot.docs.first.reference.delete();
+    // Access userId directly from AuthService
+    String? userId = await AuthService().getUserId();
+    if (userId != null) {
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .where('user_id', isEqualTo: userId)
+          .where('dua_id', isEqualTo: duaId)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.first.reference.delete();
 
-        state = state.where((id) => id != duaId).toList();
-      }
-    });
+          state = state.where((id) => id != duaId).toList();
+        }
+      });
+    }
   }
 
   void addToFavorites(String duaId) {

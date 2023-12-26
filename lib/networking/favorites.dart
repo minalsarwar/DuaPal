@@ -206,7 +206,38 @@ class FavoritesScreen extends ConsumerWidget {
     );
   }
 
-  Widget buildMainContent(WidgetRef ref) {
+   Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
+    String? userId = await AuthService().getUserId();
+    if (userId != null) {
+      QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
+          .collection('favorites')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      List<String> favoriteDuaIds = favoritesSnapshot.docs
+          .map((doc) => doc['dua_id'].toString())
+          .toList();
+
+      // Fetch dua details using dua IDs
+      List<DetailScreen> favoriteDuas = [];
+      for (String duaId in favoriteDuaIds) {
+        DocumentSnapshot duaDetailSnapshot = await FirebaseFirestore.instance
+            .collection('dua_detail')
+            .doc(duaId)
+            .get();
+
+        DetailScreen duaDetailModel =
+            DetailScreen.fromSnapshot(duaDetailSnapshot);
+        favoriteDuas.add(duaDetailModel);
+      }
+
+      return favoriteDuas;
+    } else {
+      return [];
+    }
+  }
+
+ Widget buildMainContent(WidgetRef ref) {
     return FutureBuilder(
       future: fetchUserFavorites(ref),
       builder: (context, AsyncSnapshot<List<DetailScreen>> snapshot) {
@@ -242,36 +273,7 @@ class FavoritesScreen extends ConsumerWidget {
     );
   }
 
-  Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
-    String? userId = await AuthService().getUserId();
-    if (userId != null) {
-      QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
-          .collection('favorites')
-          .where('user_id', isEqualTo: userId)
-          .get();
-
-      List<String> favoriteDuaIds = favoritesSnapshot.docs
-          .map((doc) => doc['dua_id'].toString())
-          .toList();
-
-      // Fetch dua details using dua IDs
-      List<DetailScreen> favoriteDuas = [];
-      for (String duaId in favoriteDuaIds) {
-        DocumentSnapshot duaDetailSnapshot = await FirebaseFirestore.instance
-            .collection('dua_detail')
-            .doc(duaId)
-            .get();
-
-        DetailScreen duaDetailModel =
-            DetailScreen.fromSnapshot(duaDetailSnapshot);
-        favoriteDuas.add(duaDetailModel);
-      }
-
-      return favoriteDuas;
-    } else {
-      return [];
-    }
-  }
+ 
 
   Widget buildDetailContent(String title, WidgetRef ref) {
     return Column(
@@ -362,16 +364,10 @@ class FavoriteDuaTile extends StatelessWidget {
     );
   }
 
-  // Future<void> onRemoveAsync(WidgetRef ref) async {
-  //   // Execute the original onRemove logic
-  //   onRemove();
+  
 
-  //   // If needed, you can update the UI here after the asynchronous operation
-  //   // For example, you might want to refresh the state or show a snackbar
+  // Future<void> onRemoveAsync(
+  //     String duaId, BuildContext context, WidgetRef ref) async {
+  //   ref.read(favoritesProvider.notifier).removeFromFavorites(userId,duaId);
   // }
-
-  Future<void> onRemoveAsync(
-      String duaId, BuildContext context, WidgetRef ref) async {
-    ref.read(favoritesProvider.notifier).removeFromFavorites(duaId);
-  }
 }
