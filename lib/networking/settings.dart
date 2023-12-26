@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 113, 176, 205),
+        backgroundColor: CustomColors.mainColor,
         title: Text(
           'Settings',
           style: TextStyle(
@@ -59,7 +60,7 @@ class SettingsList extends StatelessWidget {
   Widget buildSettingTile(
       {required IconData leadingIcon, required String title}) {
     return ListTile(
-      leading: Icon(leadingIcon, color: Color.fromARGB(255, 113, 176, 205)),
+      leading: Icon(leadingIcon, color: CustomColors.mainColor),
       title: Text(title),
       trailing: Icon(Icons.arrow_forward),
       onTap: () {

@@ -69,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: CustomColors.mainColor,
         title: Text(
           appBarTitle,
-          style: TextStyle(fontSize: 20, color: Colors.white),
+          style: TextStyle(
+              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -89,6 +90,9 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
@@ -243,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                   },
 //                   style: ElevatedButton.styleFrom(
 //                     primary: isMainSelected
-//                         ? Color.fromARGB(255, 113, 176, 205)
+//                         ? CustomColors.mainColor
 //                         : Colors.white,
 //                     elevation: 0,
 //                     padding: EdgeInsets.all(2),
@@ -280,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                   },
 //                   style: ElevatedButton.styleFrom(
 //                     primary: !isMainSelected
-//                         ? Color.fromARGB(255, 113, 176, 205)
+//                         ? CustomColors.mainColor
 //                         : Colors.white,
 //                     elevation: 0,
 //                     padding: EdgeInsets.all(2),

@@ -12,7 +12,7 @@
 //     return Scaffold(
 //       appBar: AppBar(
 //         title: Text(title),
-//         backgroundColor: Color.fromARGB(255, 113, 176, 205),
+//         backgroundColor: CustomColors.mainColor,
 //         centerTitle: true,
 //       ),
 //       body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -128,7 +128,7 @@
 //     return Scaffold(
 //       appBar: AppBar(
 //         title: Text(title),
-//         backgroundColor: Color.fromARGB(255, 113, 176, 205),
+//         backgroundColor: CustomColors.mainColor,
 //         centerTitle: true,
 //       ),
 //       body: duaList.when(
@@ -191,9 +191,16 @@ class DuaListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Color.fromARGB(255, 113, 176, 205),
+        title: Text(title,
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
+        backgroundColor: CustomColors.mainColor,
         centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: duaList.when(
         loading: () => Center(
@@ -259,14 +266,13 @@ class CardItem extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color.fromARGB(
-                    143, 113, 176, 205), // Change the color as needed
+                color: CustomColors.mainColor, // Change the color as needed
               ),
               child: Center(
                 child: Text(
                   itemCount.toString(),
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),

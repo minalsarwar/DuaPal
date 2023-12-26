@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title;
@@ -48,9 +49,20 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Color.fromARGB(255, 113, 176, 205),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            widget.title,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        backgroundColor: CustomColors.mainColor,
         centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -98,7 +110,7 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Color.fromARGB(255, 113, 176, 205),
+        selectedItemColor: CustomColors.mainColor,
         currentIndex: 0, // Change this value based on your initial selected tab
         items: [
           BottomNavigationBarItem(
@@ -125,7 +137,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 113, 176, 205),
+                  color: CustomColors.mainColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
@@ -183,7 +195,7 @@ class _DetailScreenState extends State<DetailScreen> {
       //       height: 40,
       //       decoration: BoxDecoration(
       //         shape: BoxShape.circle,
-      //         color: Color.fromARGB(255, 113, 176, 205),
+      //         color: CustomColors.mainColor,
       //         boxShadow: [
       //           BoxShadow(
       //             color: Colors.grey.withOpacity(0.5),
