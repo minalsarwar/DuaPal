@@ -1,41 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
-
+class SignUpPage extends ConsumerWidget {
   @override
-  // ignore: library_private_types_in_public_api
-  _SignUpPageState createState() => _SignUpPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.read(authServiceProvider);
+    final emailController = ref.read(emailControllerProvider);
+    final passwordController = ref.read(passwordControllerProvider);
+    final confirmPasswordController =
+        ref.read(confirmPasswordControllerProvider);
+    final isEmailTooLong = ref.watch(isEmailTooLongProvider);
 
-class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  bool isEmailTooLong = false;
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  void validateEmail(String value) {
-    if (value.length > 50) {
-      setState(() {
-        isEmailTooLong = true;
-      });
-    } else {
-      setState(() {
-        isEmailTooLong = false;
-      });
+    void validateEmail(String value) {
+      if (value.length > 50) {
+        ref.read(emailControllerProvider).text = value.substring(0, 50);
+        ref.refresh(emailControllerProvider);
+      }
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -135,6 +120,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: TextField(
                         maxLength: 20,
                         obscureText: true,
+                        controller: confirmPasswordController,
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
                           contentPadding: EdgeInsets.symmetric(
@@ -171,19 +157,24 @@ class _SignUpPageState extends State<SignUpPage> {
                   //   }
                   // },
                   onPressed: () async {
-                    await ApplicationState().signUpWithFirebase(
-                      emailController.text,
-                      passwordController
-                          .text, // Pass the password from the controller
-                    );
+                    if (passwordController.text ==
+                        confirmPasswordController.text) {
+                      // Passwords match, proceed with registration
+                      await auth.signUpWithEmailAndPassword(
+                        emailController.text,
+                        passwordController.text,
+                      );
 
-                    // Navigator.pushNamed(context, '/login');
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      // If signed up, navigate to the login screen
-                      Navigator.pushNamed(context, '/login');
+                      if (FirebaseAuth.instance.currentUser != null) {
+                        // If signed up, navigate to the login screen
+                        Navigator.pushNamed(context, '/login');
+                      } else {
+                        // If not signed up, print a message (you can replace this with your desired action)
+                        print('Sign up unsuccessful');
+                      }
                     } else {
-                      // If not signed up, print a message (you can replace this with your desired action)
-                      print('Sign up unsuccessful');
+                      // Passwords do not match, show an error or take appropriate action
+                      print('Passwords do not match');
                     }
                   },
 
