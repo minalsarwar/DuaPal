@@ -160,3 +160,32 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
 }
 
 final detailTitleProvider = StateProvider<String?>((ref) => null);
+
+
+//reminder
+
+final remindersProvider = StreamProvider<List<Reminder>>((ref) {
+  return FirebaseFirestore.instance
+      .collection('reminders')
+      .snapshots()
+      .map((snapshot) =>
+          snapshot.docs.map((doc) => Reminder.fromSnapshot(doc)).toList());
+});
+
+class Reminder {
+  final String title;
+  final String description;
+  final String image;
+
+  Reminder({required this.title, required this.description, required this.image});
+
+  factory Reminder.fromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    return Reminder(
+      title: data['title'],
+      description: data['description'],
+      image: data['image'],
+    );
+  }
+}
+
