@@ -45,6 +45,7 @@ class _DetailScreenState extends State<DetailScreen> {
   late int count;
   int _currentIndex = 0;
   late int originalCount;
+  bool isFavorite = false;
 
   @override
   void initState() {
@@ -55,9 +56,19 @@ class _DetailScreenState extends State<DetailScreen> {
     source = widget.source;
     count = widget.count;
     originalCount = count;
-  }
 
-  bool isFavorite = false;
+    AuthService().getUserId().then((userId) async {
+      if (userId != null) {
+        String duaId = widget.id;
+        // Check if the dua is already a favorite
+        bool isAlreadyFavorite = await isDuaFavorite(userId, duaId);
+
+        setState(() {
+          isFavorite = isAlreadyFavorite;
+        });
+      }
+    });
+  }
 
   Future<void> toggleFavoriteStatus() async {
     String? userId = await AuthService().getUserId();
@@ -369,12 +380,14 @@ class _DetailScreenState extends State<DetailScreen> {
             label: 'Share',
           ),
           BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.favorite),
-              color: isFavorite ? Colors.red : null,
-              onPressed: () {
+            icon: InkWell(
+              onTap: () {
                 toggleFavoriteStatus();
               },
+              child: Icon(
+                Icons.favorite,
+                color: isFavorite ? Colors.red : null,
+              ),
             ),
             label: 'Favorite',
           ),

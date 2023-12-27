@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/dua_model.dart';
+import 'package:flutter_application_1/model/fav_model.dart';
 import 'package:flutter_application_1/model/journal_model.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -260,25 +261,28 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
 //   });
 // }
 
-  void removeFromFavorites(String duaId) async {
+  Future<void> removeFromFavorites(String duaId) async {
     print('Removing dua from favorites with ID: $duaId');
 
     // Access userId directly from AuthService
     String? userId = await AuthService().getUserId();
     if (userId != null) {
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('favorites')
           .where('user_id', isEqualTo: userId)
           .where('dua_id', isEqualTo: duaId)
           .get()
-          .then((QuerySnapshot snapshot) {
+          .then((QuerySnapshot snapshot) async {
         if (snapshot.docs.isNotEmpty) {
-          snapshot.docs.first.reference.delete();
+          await snapshot.docs.first.reference.delete();
 
           state = state.where((id) => id != duaId).toList();
         }
       });
     }
+
+    // Add a return statement to satisfy the return type
+    return Future.value();
   }
 
   void addToFavorites(String duaId) {
@@ -319,3 +323,39 @@ class Reminder {
     );
   }
 }
+
+//////
+final favProvider = StreamProvider<List<FavModel>>((ref) {
+  String? userID = ref.read(userIDProvider);
+  print('USER ID: ${userID ?? "User not signed in"}');
+
+  Query query = FirebaseFirestore.instance
+      .collection('favorites')
+      .where('user_id', isEqualTo: userID);
+
+  return query.snapshots().map(
+    (snapshot) {
+      List<FavModel> favList = snapshot.docs
+          .map((doc) => FavModel.fromFirestore(
+              doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+          .toList();
+
+      return favList;
+    },
+  );
+});
+
+final deleteFavProvider = Provider<void Function(String)>((ref) {
+  return (String documentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(documentId)
+          .delete();
+      print('Document deleted successfully');
+    } catch (e) {
+      print('Error deleting document: $e');
+      // Handle the error as needed
+    }
+  };
+});
