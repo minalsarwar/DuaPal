@@ -169,12 +169,17 @@
 
 // reminder.dart
 // reminder.dart
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:ui';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 class ReminderScreen extends ConsumerWidget {
   @override
@@ -252,8 +257,11 @@ class ReminderScreen extends ConsumerWidget {
                       ),
                       onPressed: () {
                         // Implement share functionality here
-                        _share(context, selectedReminder.title,
-                            selectedReminder.description);
+                        _share(
+                            context,
+                            selectedReminder.title,
+                            selectedReminder.description,
+                            selectedReminder.image);
                       },
                     ),
                   ],
@@ -268,22 +276,59 @@ class ReminderScreen extends ConsumerWidget {
     );
   }
 
-  // Import dart:ui to use Rect
+  // void _share(BuildContext context, String title, String description) {
+  //   print(title);
 
-  void _share(BuildContext context, String title, String description) {
+  //   // You can customize the sharePositionOrigin based on your app's UI
+  //   Rect? sharePositionOrigin = Rect.fromPoints(
+  //     Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
+  //     Offset(MediaQuery.of(context).size.width,
+  //         MediaQuery.of(context).size.height), // Bottom-right corner
+  //   );
+
+  //   Share.share(
+  //     '$title\n\n$description',
+  //     subject: 'Optional subject',
+  //     sharePositionOrigin: sharePositionOrigin,
+  //   );
+  // }
+
+  void _share(BuildContext context, String title, String description,
+      String imageUrl) async {
     print(title);
 
-    // You can customize the sharePositionOrigin based on your app's UI
-    Rect? sharePositionOrigin = Rect.fromPoints(
-      Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
-      Offset(MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height), // Bottom-right corner
-    );
+    // Download the image from the network
+    final response = await http.get(Uri.parse(imageUrl));
 
-    Share.share(
-      '$title\n\n$description',
-      subject: 'Optional subject',
-      sharePositionOrigin: sharePositionOrigin,
-    );
+    // Check if the request was successful (status code 200)
+    if (response.statusCode == 200) {
+      final List<int> buffer = response.bodyBytes;
+
+      // Save the image to a temporary file
+      final Directory tempDir = await getTemporaryDirectory();
+      final File tempFile = File('${tempDir.path}/image.jpg');
+      await tempFile.writeAsBytes(buffer);
+
+      // Create a list of files to share
+      final List<String> files = [tempFile.path];
+
+      // You can customize the sharePositionOrigin based on your app's UI
+      Rect? sharePositionOrigin = Rect.fromPoints(
+        Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
+        Offset(MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height), // Bottom-right corner
+      );
+
+      // Share both text and image
+      Share.shareFiles(
+        files,
+        text: '$title\n\n$description',
+        subject: 'Optional subject',
+        sharePositionOrigin: sharePositionOrigin,
+      );
+    } else {
+      // Handle the case where the image couldn't be loaded
+      print('Failed to load image. Status code: ${response.statusCode}');
+    }
   }
 }
