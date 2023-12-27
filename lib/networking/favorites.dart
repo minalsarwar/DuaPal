@@ -206,7 +206,7 @@ class FavoritesScreen extends ConsumerWidget {
     );
   }
 
-   Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
+  Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
     String? userId = await AuthService().getUserId();
     if (userId != null) {
       QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
@@ -237,7 +237,7 @@ class FavoritesScreen extends ConsumerWidget {
     }
   }
 
- Widget buildMainContent(WidgetRef ref) {
+  Widget buildMainContent(WidgetRef ref) {
     return FutureBuilder(
       future: fetchUserFavorites(ref),
       builder: (context, AsyncSnapshot<List<DetailScreen>> snapshot) {
@@ -254,13 +254,10 @@ class FavoritesScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     return FavoriteDuaTile(
                       duaDetailModel: snapshot.data![index],
-                      onRemove: () {
-                        ref
+                      onRemove: () async {
+                        await ref
                             .read(favoritesProvider.notifier)
                             .removeFromFavorites(snapshot.data![index].id);
-                        // ref
-                        //     .read(favoritesProvider.notifier)
-                        //     .removeFromFavorites(snapshot.data![index].id);
                       },
                     );
                   },
@@ -272,8 +269,6 @@ class FavoritesScreen extends ConsumerWidget {
       },
     );
   }
-
- 
 
   Widget buildDetailContent(String title, WidgetRef ref) {
     return Column(
@@ -306,65 +301,48 @@ class FavoritesScreen extends ConsumerWidget {
 
 class FavoriteDuaTile extends StatelessWidget {
   final DetailScreen duaDetailModel;
-  final VoidCallback onRemove;
+  final Future<void> Function() onRemove;
 
   FavoriteDuaTile({required this.duaDetailModel, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        return ListTile(
-          title: Text(duaDetailModel.title),
-          // trailing: IconButton(
-          //   icon: Icon(
-          //     Icons.favorite,
-          //     color: ref.read(favoritesProvider).contains(duaDetailModel.id)
-          //         ? Colors.red
-          //         : Colors.grey,
-          //   ),
-          //   onPressed: () async {
-          //     await onRemoveAsync(duaDetailModel.id, context, ref);
-          //   },
-          // ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.favorite,
-              color: Colors.red,
-            ),
-            onPressed: () {
-              // await onRemoveAsync(duaDetailModel.id, context, ref);
-              onRemove();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Dua removed from favorites'),
-                ),
-              );
-            },
+    return Card(
+      child: ListTile(
+        title: Text(duaDetailModel.title),
+        trailing: IconButton(
+          icon: Icon(
+            Icons.favorite,
+            color: Colors.red,
           ),
-          onTap: () {
-            // ref.read(detailTitleProvider.notifier).state = duaDetailModel.title;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailScreen(
-                  title: duaDetailModel.title,
-                  id: duaDetailModel.id,
-                  arabic: duaDetailModel.arabic,
-                  transliteration: duaDetailModel.transliteration,
-                  translation: duaDetailModel.translation,
-                  source: duaDetailModel.source,
-                  count: duaDetailModel.count,
-                ),
+          onPressed: () async {
+            await onRemove();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Dua removed from favorites'),
               ),
             );
           },
-        );
-      },
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailScreen(
+                title: duaDetailModel.title,
+                id: duaDetailModel.id,
+                arabic: duaDetailModel.arabic,
+                transliteration: duaDetailModel.transliteration,
+                translation: duaDetailModel.translation,
+                source: duaDetailModel.source,
+                count: duaDetailModel.count,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
-
-  
 
   // Future<void> onRemoveAsync(
   //     String duaId, BuildContext context, WidgetRef ref) async {
