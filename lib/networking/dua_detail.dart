@@ -332,7 +332,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: Container(
                         padding: EdgeInsets.all(16.0),
                         child: Text(
-                          'Explanation:\n\n$explanation',
+                          '${explanation.isNotEmpty ? 'Explanation:\n\n$explanation' : "No explanation available yet"}',
                           style: TextStyle(fontSize: 18.0),
                         ),
                       ),
