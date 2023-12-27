@@ -304,9 +304,10 @@ class JournalEntryScreen extends ConsumerWidget {
                           }
                           // ref.read(saveJournalEntryProvider)();
                           // Navigate to HomeScreen after saving
+                          ref.read(currentIndexProvider.notifier).state = 2;
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => JournalListScreen(),
+                              builder: (context) => HomeScreen(),
                             ),
                           );
                         },
@@ -319,7 +320,7 @@ class JournalEntryScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           'Save',
-                          style: TextStyle(fontSize: 17),
+                          style: TextStyle(fontSize: 17, color: Colors.white),
                         ),
                       ),
                     ),

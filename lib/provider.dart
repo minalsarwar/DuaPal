@@ -13,6 +13,8 @@ final authProvider = StateProvider<User?>((ref) {
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
+final currentIndexProvider = StateProvider<int>((ref) => 0);
+
 //homepage
 
 final duaListTitleProvider = StateProvider<String>((ref) {
@@ -132,11 +134,6 @@ final saveJournalEntryProvider = Provider<void Function(String?)>(
                 entry.toMap(),
               );
           print('SAVEDDD');
-          ref.refresh(journalEntryProvider);
-          ref.refresh(selectedEmotionProvider);
-          ref.refresh(selectedDateProvider);
-          ref.refresh(selectedTimeProvider);
-          ref.refresh(selectedColorProvider);
         } else {
           // If entryId is provided, update the existing entry
           await FirebaseFirestore.instance
@@ -144,6 +141,12 @@ final saveJournalEntryProvider = Provider<void Function(String?)>(
               .doc(entryId)
               .update(entry.toMap());
         }
+        ref.refresh(journalEntryProvider);
+        ref.refresh(selectedEmotionProvider);
+        ref.refresh(selectedDateProvider);
+        ref.refresh(selectedTimeProvider);
+        ref.refresh(selectedColorProvider);
+        ref.refresh(entryIdProvider);
       } catch (e) {
         print('Error saving to Firestore: $e');
       }

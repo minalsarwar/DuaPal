@@ -228,6 +228,7 @@ class DuaListScreen extends ConsumerWidget {
                         translation: dua.translation,
                         source: dua.source,
                         count: dua.count,
+                        explanation: dua.explanation,
                       ),
                     ),
                   );

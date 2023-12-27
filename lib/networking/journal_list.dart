@@ -8,7 +8,7 @@ class JournalListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final jorunalList = ref.watch(journalsProvider);
-
+    final currentIndex = ref.watch(currentIndexProvider);
     return Scaffold(
       body: jorunalList.when(
         data: (journals) {

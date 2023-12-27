@@ -13,22 +13,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int currentIndex = ref.watch(currentIndexProvider);
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  bool isMainSelected = true;
-
-  @override
-  Widget build(BuildContext context) {
     String appBarTitle = 'Home';
 
-    switch (_currentIndex) {
+    switch (currentIndex) {
       case 0:
         appBarTitle = 'Home';
         break;
@@ -76,12 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.white),
-            onPressed: () {
-              // Handle search action
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.search, color: Colors.white),
+          //   onPressed: () {
+          //     // Handle search action
+          //   },
+          // ),
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
             onPressed: () {
@@ -170,14 +168,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: _currentIndex == 1
+      body: currentIndex == 1
           // ? FavoritesScreen()
           ? FavListScreen()
-          : _currentIndex == 4
+          : currentIndex == 4
               ? ReminderScreen()
-              : _currentIndex == 3
+              : currentIndex == 3
                   ? EmotionsContent()
-                  : _currentIndex == 2
+                  : currentIndex == 2
                       // ? JournalEntryScreen()
                       ? JournalListScreen()
                       : HomeContent(),
@@ -187,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: Colors.grey,
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -211,14 +209,222 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          print('Tapped on index: $index');
+          ref.read(currentIndexProvider.notifier).state = index;
+          print(
+              'current index: ${ref.watch(currentIndexProvider.notifier).state}');
         },
       ),
     );
   }
 }
+
+// class HomeScreen extends StatefulWidget {
+//   const HomeScreen({super.key});
+
+//   @override
+//   _HomeScreenState createState() => _HomeScreenState();
+// }
+
+// class _HomeScreenState extends State<HomeScreen> {
+//   int _currentIndex = 0;
+//   bool isMainSelected = true;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     String appBarTitle = 'Home';
+
+//     switch (_currentIndex) {
+//       case 0:
+//         appBarTitle = 'Home';
+//         break;
+//       case 1:
+//         appBarTitle = 'Favourites';
+//         break;
+//       case 2:
+//         appBarTitle = 'Journal';
+//         break;
+//       case 3:
+//         appBarTitle = 'Emotions';
+//         break;
+//       case 4:
+//         appBarTitle = 'Reminder';
+//         break;
+//     }
+
+//     Widget buildSocialIcon(String text, IconData iconData) {
+//       return Column(
+//         children: [
+//           Ink(
+//             decoration: ShapeDecoration(
+//               color: Colors.grey[200],
+//               shape: CircleBorder(),
+//             ),
+//             child: CircleAvatar(
+//               backgroundColor: Colors.transparent,
+//               child: Icon(
+//                 iconData,
+//                 color: CustomColors.mainColor,
+//               ),
+//             ),
+//           ),
+//         ],
+//       );
+//     }
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: CustomColors.mainColor,
+//         title: Text(
+//           appBarTitle,
+//           style: TextStyle(
+//               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+//         ),
+//         centerTitle: true,
+//         actions: [
+//           // IconButton(
+//           //   icon: Icon(Icons.search, color: Colors.white),
+//           //   onPressed: () {
+//           //     // Handle search action
+//           //   },
+//           // ),
+//           IconButton(
+//             icon: Icon(Icons.settings, color: Colors.white),
+//             onPressed: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(builder: (context) => SettingsScreen()),
+//               );
+//             },
+//           ),
+//         ],
+//         iconTheme: IconThemeData(
+//           color: Colors.white,
+//         ),
+//       ),
+//       drawer: Drawer(
+//         backgroundColor: Colors.white,
+//         child: Column(
+//           children: <Widget>[
+//             DrawerHeader(
+//               decoration: BoxDecoration(),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Padding(
+//                     padding: const EdgeInsets.all(8.0),
+//                     child: Image.asset('android/assets/appLogo.png',
+//                         height: 70, width: 60),
+//                   ),
+//                   Text('Dua Pal',
+//                       style:
+//                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+//                 ],
+//               ),
+//             ),
+//             ListTile(
+//               leading: Image.asset(
+//                 'android/assets/tasbih.png', // Adjust the path to the icon
+//                 width: 30, // Specify the width of the icon
+//                 height: 30, // Specify the height of the icon
+//                 color: Color.fromARGB(
+//                     255, 113, 176, 205), // Set the desired icon color
+//               ),
+//               title: Text(
+//                 'Tasbih Counter',
+//                 style: TextStyle(fontSize: 16),
+//               ),
+//               onTap: () {
+//                 // Handle Tasbih Counter action
+//               },
+//             ),
+//             ListTile(
+//               leading: Icon(Icons.chat_bubble_outline,
+//                   size: 28, color: CustomColors.mainColor),
+//               title: Text('Feedback', style: TextStyle(fontSize: 16)),
+//               onTap: () {
+//                 // Handle Feedback action
+//               },
+//             ),
+//             ListTile(
+//               leading: Icon(Icons.help_outline_rounded,
+//                   size: 28, color: CustomColors.mainColor),
+//               title: Text('FAQs', style: TextStyle(fontSize: 16)),
+//               onTap: () {
+//                 // Handle FAQs action
+//               },
+//             ),
+//             ListTile(
+//               leading: Icon(Icons.info_outline_rounded,
+//                   size: 28, color: CustomColors.mainColor),
+//               title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
+//               onTap: () {
+//                 // Handle FAQs action
+//               },
+//             ),
+//             const SizedBox(height: 325),
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//               children: [
+//                 buildSocialIcon('facebook', Icons.facebook),
+//                 buildSocialIcon('instagram', FontAwesomeIcons.instagram),
+//                 buildSocialIcon('twitter', FontAwesomeIcons.twitter),
+//                 buildSocialIcon('telegram', FontAwesomeIcons.telegram),
+//                 buildSocialIcon('whatsapp', FontAwesomeIcons.whatsapp),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//       body: _currentIndex == 1
+//           // ? FavoritesScreen()
+//           ? FavListScreen()
+//           : _currentIndex == 4
+//               ? ReminderScreen()
+//               : _currentIndex == 3
+//                   ? EmotionsContent()
+//                   : _currentIndex == 2
+//                       // ? JournalEntryScreen()
+//                       ? JournalListScreen()
+//                       : HomeContent(),
+//       bottomNavigationBar: BottomNavigationBar(
+//         type: BottomNavigationBarType.fixed,
+//         selectedItemColor: CustomColors.mainColor,
+//         unselectedItemColor: Colors.grey,
+//         selectedFontSize: 14,
+//         unselectedFontSize: 14,
+//         currentIndex: _currentIndex,
+//         items: [
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.home_outlined),
+//             label: 'Home',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.favorite_outline),
+//             label: 'Favourites',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.article_outlined),
+//             label: 'Journal',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.emoji_emotions_outlined),
+//             label: 'Emotions',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.calendar_today_outlined),
+//             label: 'Reminder',
+//           ),
+//         ],
+//         onTap: (index) {
+//           setState(() {
+//             _currentIndex = index;
+//           });
+//         },
+//       ),
+//     );
+//   }
+// }
 
 // class HomeContent extends StatefulWidget {
 //   @override

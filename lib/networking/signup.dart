@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
@@ -179,7 +180,7 @@ class SignUpPage extends ConsumerWidget {
                   },
 
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 118, 181, 197),
+                    backgroundColor: CustomColors.mainColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
