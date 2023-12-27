@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:just_audio/just_audio.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title;
@@ -36,6 +37,7 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
   late String arabic;
   late String transliteration;
   late String translation;
@@ -114,6 +116,113 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
+  // }
+  Future<void> _playAudio() async {
+    try {
+      String audioUrl = await _getAudioUrl(widget.id);
+
+      await _audioPlayer.setUrl(audioUrl);
+      await _audioPlayer.play();
+    } catch (e) {
+      print("Error playing audio: $e");
+    }
+  }
+
+  Future<String> _getAudioUrl(String duaId) async {
+    try {
+      QuerySnapshot audioSnapshot = await FirebaseFirestore.instance
+          .collection('audios')
+          .where('dua_id', isEqualTo: duaId)
+          .get();
+      print(duaId);
+
+      if (audioSnapshot.docs.isNotEmpty) {
+        return audioSnapshot.docs.first['audio'];
+      } else {
+        throw StateError("No document found with dua_id: $duaId");
+      }
+    } catch (e) {
+      print("Error fetching audio URL: $e");
+      throw e;
+    }
+  }
+
+  Widget mediaPlayerDesign() {
+    return Container(
+      height: 250,
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          IconButton(
+            icon: Icon(
+              _audioPlayer.playing ? Icons.pause : Icons.play_arrow,
+              size: 40.0,
+            ),
+            onPressed: () async {
+              if (_audioPlayer.playing) {
+                await _audioPlayer.pause();
+              } else {
+                // Only play audio if it's not already playing
+                if (!_audioPlayer.playing) {
+                  await _playAudio();
+                }
+              }
+              setState(() {});
+            },
+          ),
+          StreamBuilder<Duration>(
+            stream: _audioPlayer.positionStream,
+            builder: (context, snapshot) {
+              final position = snapshot.data ?? Duration.zero;
+              final duration = _audioPlayer.duration ?? Duration.zero;
+              return Column(
+                children: [
+                  Slider(
+                    value: position.inMilliseconds.toDouble(),
+                    onChanged: (value) {
+                      _audioPlayer.seek(Duration(milliseconds: value.toInt()));
+                    },
+                    min: 0.0,
+                    max: duration.inMilliseconds.toDouble(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          formatDuration(position),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        Text(
+                          formatDuration(duration),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$twoDigitMinutes:$twoDigitSeconds';
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +292,27 @@ class _DetailScreenState extends State<DetailScreen> {
         currentIndex: 0, // Change this value based on your initial selected tab
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_arrow),
+            icon: IconButton(
+              icon: Icon(Icons.play_arrow),
+              // onPressed: () async {
+              //   await _playAudio();
+              //   showModalBottomSheet(
+              //     context: context,
+              //     builder: (context) => mediaPlayerDesign(),
+              //   );
+              //   // mediaPlayerDesign();
+              // },
+              onPressed: () async {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    // Play audio when the bottom sheet is displayed
+                    _playAudio();
+                    return mediaPlayerDesign();
+                  },
+                );
+              },
+            ),
             label: 'Play',
           ),
           BottomNavigationBarItem(

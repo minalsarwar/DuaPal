@@ -206,7 +206,7 @@ class FavoritesScreen extends ConsumerWidget {
     );
   }
 
-   Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
+  Future<List<DetailScreen>> fetchUserFavorites(WidgetRef ref) async {
     String? userId = await AuthService().getUserId();
     if (userId != null) {
       QuerySnapshot favoritesSnapshot = await FirebaseFirestore.instance
@@ -237,12 +237,12 @@ class FavoritesScreen extends ConsumerWidget {
     }
   }
 
- Widget buildMainContent(WidgetRef ref) {
+  Widget buildMainContent(WidgetRef ref) {
     return FutureBuilder(
       future: fetchUserFavorites(ref),
       builder: (context, AsyncSnapshot<List<DetailScreen>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -272,8 +272,6 @@ class FavoritesScreen extends ConsumerWidget {
       },
     );
   }
-
- 
 
   Widget buildDetailContent(String title, WidgetRef ref) {
     return Column(
@@ -363,8 +361,6 @@ class FavoriteDuaTile extends StatelessWidget {
       },
     );
   }
-
-  
 
   // Future<void> onRemoveAsync(
   //     String duaId, BuildContext context, WidgetRef ref) async {

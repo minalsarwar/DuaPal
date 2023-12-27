@@ -180,6 +180,7 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:ui';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 
 class ReminderScreen extends ConsumerWidget {
   @override
@@ -276,59 +277,83 @@ class ReminderScreen extends ConsumerWidget {
     );
   }
 
-  // void _share(BuildContext context, String title, String description) {
+  // void _share(BuildContext context, String title, String description,
+  //     String imageUrl) async {
   //   print(title);
 
-  //   // You can customize the sharePositionOrigin based on your app's UI
-  //   Rect? sharePositionOrigin = Rect.fromPoints(
-  //     Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
-  //     Offset(MediaQuery.of(context).size.width,
-  //         MediaQuery.of(context).size.height), // Bottom-right corner
-  //   );
+  //   // Download the image from the network
+  //   final response = await http.get(Uri.parse(imageUrl));
 
-  //   Share.share(
-  //     '$title\n\n$description',
-  //     subject: 'Optional subject',
-  //     sharePositionOrigin: sharePositionOrigin,
-  //   );
+  //   // Check if the request was successful (status code 200)
+  //   if (response.statusCode == 200) {
+  //     final List<int> buffer = response.bodyBytes;
+
+  //     // Save the image to a temporary file
+  //     final Directory tempDir = await getTemporaryDirectory();
+  //     final File tempFile = File('${tempDir.path}/image.jpg');
+  //     await tempFile.writeAsBytes(buffer);
+
+  //     // Create a list of files to share
+  //     final List<String> files = [tempFile.path];
+
+  //     // You can customize the sharePositionOrigin based on your app's UI
+  //     Rect? sharePositionOrigin = Rect.fromPoints(
+  //       Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
+  //       Offset(MediaQuery.of(context).size.width,
+  //           MediaQuery.of(context).size.height), // Bottom-right corner
+  //     );
+
+  //     // Share both text and image
+  //     Share.shareFiles(
+  //       files,
+  //       text: '$title\n\n$description',
+  //       subject: 'Optional subject',
+  //       sharePositionOrigin: sharePositionOrigin,
+  //     );
+  //   } else {
+  //     // Handle the case where the image couldn't be loaded
+  //     print('Failed to load image. Status code: ${response.statusCode}');
+  //   }
   // }
 
-  void _share(BuildContext context, String title, String description,
-      String imageUrl) async {
-    print(title);
-
-    // Download the image from the network
-    final response = await http.get(Uri.parse(imageUrl));
-
-    // Check if the request was successful (status code 200)
-    if (response.statusCode == 200) {
-      final List<int> buffer = response.bodyBytes;
-
-      // Save the image to a temporary file
-      final Directory tempDir = await getTemporaryDirectory();
-      final File tempFile = File('${tempDir.path}/image.jpg');
-      await tempFile.writeAsBytes(buffer);
-
-      // Create a list of files to share
-      final List<String> files = [tempFile.path];
-
-      // You can customize the sharePositionOrigin based on your app's UI
-      Rect? sharePositionOrigin = Rect.fromPoints(
-        Offset(0, MediaQuery.of(context).size.height), // Bottom-left corner
-        Offset(MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height), // Bottom-right corner
-      );
-
-      // Share both text and image
-      Share.shareFiles(
-        files,
-        text: '$title\n\n$description',
-        subject: 'Optional subject',
-        sharePositionOrigin: sharePositionOrigin,
-      );
-    } else {
-      // Handle the case where the image couldn't be loaded
-      print('Failed to load image. Status code: ${response.statusCode}');
-    }
+  void _share(
+      BuildContext context, String title, String description, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                height: 100,
+                width: 100,
+              ),
+              SizedBox(height: 8),
+              Text(title),
+              Text(description),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Use the share package to share data
+                Share.share('$title\n\n$description\n$imageUrl');
+                Navigator.of(context).pop();
+              },
+              child: Text('Share'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
