@@ -4,6 +4,7 @@ import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title;
@@ -13,6 +14,7 @@ class DetailScreen extends StatefulWidget {
   final String translation;
   final String source;
   final int count;
+  final String explanation;
 
   const DetailScreen(
       {required this.title,
@@ -21,7 +23,8 @@ class DetailScreen extends StatefulWidget {
       required this.transliteration,
       required this.translation,
       required this.source,
-      required this.count});
+      required this.count,
+      required this.explanation});
 
   DetailScreen.fromSnapshot(DocumentSnapshot snapshot)
       : title = snapshot['title'],
@@ -30,7 +33,8 @@ class DetailScreen extends StatefulWidget {
         transliteration = snapshot['transliteration'],
         translation = snapshot['translation'],
         source = snapshot['source'],
-        count = snapshot['count'];
+        count = snapshot['count'],
+        explanation = snapshot['explanation'];
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -43,6 +47,7 @@ class _DetailScreenState extends State<DetailScreen> {
   late String translation;
   late String source;
   late int count;
+  late String explanation;
   int _currentIndex = 0;
   late int originalCount;
   bool isFavorite = false;
@@ -56,6 +61,7 @@ class _DetailScreenState extends State<DetailScreen> {
     source = widget.source;
     count = widget.count;
     originalCount = count;
+    explanation = widget.explanation;
 
     AuthService().getUserId().then((userId) async {
       if (userId != null) {
@@ -299,21 +305,10 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: CustomColors.mainColor,
-        currentIndex: 0, // Change this value based on your initial selected tab
         items: [
           BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.play_arrow),
-              // onPressed: () async {
-              //   await _playAudio();
-              //   showModalBottomSheet(
-              //     context: context,
-              //     builder: (context) => mediaPlayerDesign(),
-              //   );
-              //   // mediaPlayerDesign();
-              // },
-              onPressed: () async {
+            icon: InkWell(
+              onTap: () async {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) {
@@ -323,11 +318,30 @@ class _DetailScreenState extends State<DetailScreen> {
                   },
                 );
               },
+              child: Icon(Icons.play_arrow),
             ),
             label: 'Play',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info),
+            icon: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SingleChildScrollView(
+                      child: Container(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Explanation:\n\n$explanation',
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Icon(Icons.info),
+            ),
             label: 'Info',
           ),
           BottomNavigationBarItem(
@@ -360,7 +374,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: count > 0
                       ? Text(
                           count.toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 20),
                         )
                       : IconButton(
                           icon: Icon(Icons.restart_alt, color: Colors.white),
@@ -376,7 +390,14 @@ class _DetailScreenState extends State<DetailScreen> {
             label: 'Count',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.share),
+            icon: InkWell(
+              onTap: () {
+                String title = widget.title;
+                Share.share(
+                    '$title\n\n$arabic\n\nRepeat ${count == 1 ? "1 time" : "$count times"}\n\n$transliteration\n\n$translation\n\nSource:\n$source');
+              },
+              child: Icon(Icons.share),
+            ),
             label: 'Share',
           ),
           BottomNavigationBarItem(
@@ -396,57 +417,3 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
-
-// bottomNavigationBar: CircleNavBar(
-      //   activeIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   activeIcons: [
-      //     Icon(Icons.play_arrow),
-      //     Icon(Icons.info),
-      //     Container(
-      //       width: 40,
-      //       height: 40,
-      //       decoration: BoxDecoration(
-      //         shape: BoxShape.circle,
-      //         color: CustomColors.mainColor,
-      //         boxShadow: [
-      //           BoxShadow(
-      //             color: Colors.grey.withOpacity(0.5),
-      //             spreadRadius: 2,
-      //             blurRadius: 5,
-      //             offset: Offset(0, 3),
-      //           ),
-      //         ],
-      //       ),
-      //       child: Center(
-      //         child: Text(
-      //           count.toString(),
-      //           style: TextStyle(color: Colors.white),
-      //         ),
-      //       ),
-      //     ),
-      //     Icon(Icons.share),
-      //     Icon(Icons.favorite),
-      //   ],
-      //   inactiveIcons: [
-      //     Icon(Icons.play_arrow),
-      //     Icon(Icons.info),
-      //     Icon(Icons.circle),
-      //     Icon(Icons.share),
-      //     Icon(Icons.favorite),
-      //   ],
-      //   height: 80,
-      //   circleWidth: 60,
-      //   color: Colors.blue,
-      //   circleColor: Colors.white,
-      //   padding: EdgeInsets.symmetric(horizontal: 20),
-      //   cornerRadius: BorderRadius.circular(30),
-      //   shadowColor: Colors.grey,
-      //   elevation: 5,
-      // ),
- 
- 

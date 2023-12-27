@@ -336,6 +336,7 @@ class FavoriteDuaTile extends StatelessWidget {
                 translation: duaDetailModel.translation,
                 source: duaDetailModel.source,
                 count: duaDetailModel.count,
+                explanation: duaDetailModel.explanation,
               ),
             ),
           );

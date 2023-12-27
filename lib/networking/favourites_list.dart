@@ -39,6 +39,7 @@ class FavListScreen extends ConsumerWidget {
                         translation: duaModel.translation,
                         source: duaModel.source,
                         count: duaModel.count,
+                        explanation: duaModel.explanation,
                       ),
                     ),
                   );
