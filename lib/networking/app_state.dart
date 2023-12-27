@@ -78,4 +78,17 @@ class AuthService {
       print('Error signing out: $e');
     }
   }
+
+  Future<String?> getUserId() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+
+    if (user != null) {
+      String userId = user.uid;
+      return userId;
+    } else {
+      // User is not signed in
+      return null;
+    }
+  }
 }

@@ -12,17 +12,6 @@ final authProvider = StateProvider<User?>((ref) {
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-// final duaListProvider = StreamProvider<List<DuaModel>>(
-//   (ref) {
-//     // Use .snapshots() to listen for changes in the Firestore collection
-//     return FirebaseFirestore.instance.collection('dua_detail').snapshots().map(
-//       (snapshot) {
-//         return snapshot.docs.map((doc) => DuaModel.fromFirestore(doc)).toList();
-//       },
-//     );
-//   },
-// );
-
 //homepage
 
 final duaListTitleProvider = StateProvider<String>((ref) {
@@ -87,62 +76,144 @@ final isMainSelectedProvider = StateProvider<bool>((ref) {
 // });
 
 //journal entry providers
+// Provider for the journal entry text
+final journalEntryProvider = StateProvider<String>((ref) => '');
 
-// // Provider for the journal entry text
-// final journalEntryProvider = StateProvider<String>((ref) => '');
+// Provider for managing the selected emotion
+final selectedEmotionProvider = StateProvider<IconData?>((ref) => null);
 
-// // Provider for managing the selected emotion
-// final selectedEmotionProvider = StateProvider<IconData?>((ref) => null);
+// Provider for managing the selected date
+final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
 
-// // Provider for managing the selected date
-// final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
+// Provider for managing the selected time
+final selectedTimeProvider = StateProvider<TimeOfDay?>((ref) => null);
 
-// // Provider for managing the selected time
-// final selectedTimeProvider = StateProvider<TimeOfDay?>((ref) => null);
+// Provider for managing the selected color
+final selectedColorProvider =
+    StateProvider<Color>((ref) => Color.fromARGB(197, 199, 222, 241));
 
-// // Provider for managing the selected color
-// final selectedColorProvider =
-//     StateProvider<Color>((ref) => Color.fromARGB(197, 199, 222, 241));
+final entryIdProvider = StateProvider<String?>((ref) => null);
 
-// // Provider for getting the user ID
-// final userIDProvider = Provider<String>((ref) => 'YOUR_USER_ID'); // Replace with actual user ID
+final saveJournalEntryProvider = Provider<void Function(String?)>(
+  (ref) => (String? entryId) async {
+    final journalEntry = ref.read(journalEntryProvider.notifier).state;
+    final selectedEmotion = ref.read(selectedEmotionProvider.notifier).state;
+    final selectedDate = ref.read(selectedDateProvider.notifier).state;
+    final selectedTime = ref.read(selectedTimeProvider.notifier).state;
+    final selectedColor = ref.read(selectedColorProvider.notifier).state;
+    String? userID = ref.read(userIDProvider);
 
-// // Provider for saving the journal entry to Firestore
-// final saveJournalEntryProvider = Provider<void Function()>(
-//   (ref) => () async {
-//     final journalEntry = ref.read(journalEntryProvider.notifier).state;
-//     final selectedEmotion = ref.read(selectedEmotionProvider.notifier).state;
-//     final selectedDate = ref.read(selectedDateProvider.notifier).state;
-//     final selectedTime = ref.read(selectedTimeProvider.notifier).state;
-//     final selectedColor = ref.read(selectedColorProvider.notifier).state;
-//     final userID = ref.read(userIDProvider);
+    if (journalEntry.isNotEmpty &&
+        selectedEmotion != null &&
+        selectedDate != null &&
+        selectedTime != null &&
+        userID != null) {
+      // Check if userID is not null
+      final entry = JournalModel(
+        id: entryId ?? '', // Use provided entryId or an empty string
+        body: journalEntry,
+        dateTime: DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        ),
+        mood: getEmotionText(selectedEmotion),
+        color: selectedColor,
+        userID: userID,
+      );
 
-//     if (journalEntry.isNotEmpty &&
-//         selectedEmotion != null &&
-//         selectedDate != null &&
-//         selectedTime != null) {
-//       final entry = JournalModel(
-//         id: '',
-//         body: journalEntry,
-//         date: selectedDate.toIso8601String(),
-//         mood: getEmotionText(selectedEmotion),
-//         time: selectedTime.format(ref.read(context)),
-//         userID: userID,
-//       );
+      try {
+        if (entryId == null) {
+          // If entryId is null, add a new entry
+          await FirebaseFirestore.instance.collection('journals').add(
+                entry.toMap(),
+              );
+          print('SAVEDDD');
+          ref.refresh(journalEntryProvider);
+          ref.refresh(selectedEmotionProvider);
+          ref.refresh(selectedDateProvider);
+          ref.refresh(selectedTimeProvider);
+          ref.refresh(selectedColorProvider);
+        } else {
+          // If entryId is provided, update the existing entry
+          await FirebaseFirestore.instance
+              .collection('journals')
+              .doc(entryId)
+              .update(entry.toMap());
+        }
+      } catch (e) {
+        print('Error saving to Firestore: $e');
+      }
+    }
+  },
+);
 
-//       // Save the entry to Firestore
-//       await FirebaseFirestore.instance.collection('journals').add(
-//             entry.toMap(),
-//           );
-
-//       // Clear the journal entry text after saving
-//       ref.read(journalEntryProvider.notifier).state = '';
-//     }
-//   },
-// );
-
-String getEmotionText(IconData emotion) {
-  // You might implement logic to convert IconData to text
-  // Replace this with your actual logic
-  return 'EmotionText';
+String getEmotionText(IconData? selectedEmotion) {
+  if (selectedEmotion == Icons.sentiment_very_satisfied) {
+    return 'Great';
+  } else if (selectedEmotion == Icons.sentiment_satisfied) {
+    return 'Good';
+  } else if (selectedEmotion == Icons.sentiment_neutral) {
+    return 'Normal';
+  } else if (selectedEmotion == Icons.sentiment_dissatisfied) {
+    return 'Sad';
+  } else if (selectedEmotion == Icons.sentiment_very_dissatisfied) {
+    return 'Emotional';
+  } else {
+    return '';
+  }
 }
+
+final journalsProvider = StreamProvider<List<JournalModel>>((ref) {
+  String? userID = ref.read(userIDProvider);
+  print('USER ID: ${userID ?? "User not signed in"}');
+
+  Query query = FirebaseFirestore.instance
+      .collection('journals')
+      .where('userID', isEqualTo: userID);
+
+  return query.snapshots().map(
+    (snapshot) {
+      List<JournalModel> journalList = snapshot.docs
+          .map((doc) => JournalModel.fromFirestore(
+              doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+          .toList();
+
+      // Sort the list based on dateTime
+      journalList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+      return journalList;
+    },
+  );
+});
+
+// Provider for user ID
+final userIDProvider = Provider<String?>((ref) {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+
+  if (user != null) {
+    String userId = user.uid;
+    return userId;
+  } else {
+    // User is not signed in
+    return null;
+  }
+});
+
+final deleteJournalEntryProvider = Provider<void Function(String)>((ref) {
+  return (String documentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('journals')
+          .doc(documentId)
+          .delete();
+      print('Document deleted successfully');
+    } catch (e) {
+      print('Error deleting document: $e');
+      // Handle the error as needed
+    }
+  };
+});

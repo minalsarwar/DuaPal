@@ -1,314 +1,340 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/networking/home_page.dart';
+import 'package:flutter_application_1/networking/journal_list.dart';
+import 'package:flutter_application_1/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 
-class JournalEntryScreen extends StatefulWidget {
-  const JournalEntryScreen({Key? key}) : super(key: key);
-
+class JournalEntryScreen extends ConsumerWidget {
   @override
-  _JournalEntryScreenState createState() => _JournalEntryScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entryID = ref.watch(entryIdProvider);
+    final selectedDate = ref.watch(selectedDateProvider);
+    final selectedTime = ref.watch(selectedTimeProvider);
+    final selectedEmotion = ref.watch(selectedEmotionProvider);
+    final journalEntryController = TextEditingController.fromValue(
+      TextEditingValue(text: ref.read(journalEntryProvider.notifier).state),
+    );
+    final selectedColor = ref.watch(selectedColorProvider);
 
-class _JournalEntryScreenState extends State<JournalEntryScreen> {
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
-  IconData? selectedEmotion;
-  TextEditingController journalEntryController = TextEditingController();
-  Color selectedColor = Color.fromARGB(197, 199, 222, 241); // Default color
+    void updateSelectedEmotion(IconData icon) {
+      ref.read(selectedEmotionProvider.notifier).state = icon;
+    }
 
-  // Function to update the selected emotion
-  void updateSelectedEmotion(IconData icon) {
-    setState(() {
-      selectedEmotion = icon;
-    });
-  }
+    void updateSelectedColor(Color color) {
+      ref.read(selectedColorProvider.notifier).state = color;
+    }
 
-  // Function to update the selected color
-  void updateSelectedColor(Color color) {
-    setState(() {
-      selectedColor = color;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Center(
-                child: Text(
-                  'How are you feeling today?',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              // Emotion icons and options
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Scaffold(
+        appBar: AppBar(
+            title: Text('Journal Entry',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
+            backgroundColor: CustomColors.mainColor,
+            centerTitle: true,
+            iconTheme: IconThemeData(
+              color: Colors.white,
+            )),
+        body: Container(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  EmotionOption(
-                    icon: Icons.sentiment_very_satisfied,
-                    colour: Color.fromARGB(255, 242, 234, 90),
-                    text: 'Great',
-                    onPressed: () =>
-                        updateSelectedEmotion(Icons.sentiment_very_satisfied),
-                    isSelected:
-                        selectedEmotion == Icons.sentiment_very_satisfied,
-                  ),
-                  EmotionOption(
-                    icon: Icons.sentiment_satisfied,
-                    colour: Color.fromARGB(255, 147, 248, 114),
-                    text: 'Good',
-                    onPressed: () =>
-                        updateSelectedEmotion(Icons.sentiment_satisfied),
-                    isSelected: selectedEmotion == Icons.sentiment_satisfied,
-                  ),
-                  EmotionOption(
-                    icon: Icons.sentiment_neutral,
-                    colour: Color.fromARGB(255, 250, 189, 98),
-                    text: 'Normal',
-                    onPressed: () =>
-                        updateSelectedEmotion(Icons.sentiment_neutral),
-                    isSelected: selectedEmotion == Icons.sentiment_neutral,
-                  ),
-                  EmotionOption(
-                    icon: Icons.sentiment_dissatisfied,
-                    colour: Color.fromARGB(255, 116, 188, 251),
-                    text: 'Sad',
-                    onPressed: () =>
-                        updateSelectedEmotion(Icons.sentiment_dissatisfied),
-                    isSelected: selectedEmotion == Icons.sentiment_dissatisfied,
-                  ),
-                  EmotionOption(
-                    icon: Icons.sentiment_very_dissatisfied,
-                    colour: Color.fromARGB(255, 245, 114, 105),
-                    text: 'Emotional',
-                    onPressed: () => updateSelectedEmotion(
-                        Icons.sentiment_very_dissatisfied),
-                    isSelected:
-                        selectedEmotion == Icons.sentiment_very_dissatisfied,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(Icons.calendar_today), // Add calendar icon
-                        SizedBox(
-                            width: 8), // Add some space between icon and text
-                        Flexible(
-                          // Use Flexible to allow text to wrap
-                          child: TextButton(
-                            onPressed: () async {
-                              final pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: selectedDate ?? DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  selectedDate = pickedDate;
-                                });
-                              }
-                            },
-                            child: Text(
-                              (selectedDate != null
-                                  ? '${selectedDate!.day.toString().padLeft(2, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.year}'
-                                  : 'Select a date'),
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ),
-                        ),
-                      ],
+                  const Center(
+                    child: Text(
+                      'How are you feeling today?',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(
-                      width:
-                          16), // Add some space between date and time pickers
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(Icons.access_time), // Add time icon
-                        SizedBox(
-                            width: 8), // Add some space between icon and text
-                        Flexible(
-                          // Use Flexible to allow text to wrap
-                          child: TextButton(
-                            onPressed: () async {
-                              final pickedTime = await showTimePicker(
-                                context: context,
-                                initialTime: selectedTime ?? TimeOfDay.now(),
-                              );
-                              if (pickedTime != null) {
-                                setState(() {
-                                  selectedTime = pickedTime;
-                                });
-                              }
-                            },
-                            child: Text(
-                              selectedTime != null
-                                  ? selectedTime!.format(context)
-                                  : 'Select a time',
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(
+                    height: 30,
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: const Text(
-                      'Reflections for today',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  // Emotion icons and options
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      ColorOption(
-                        color: Color.fromARGB(255, 248, 210, 208),
+                      EmotionOption(
+                        icon: Icons.sentiment_very_satisfied,
+                        colour: Color.fromARGB(255, 242, 234, 90),
+                        text: 'Great',
+                        onPressed: () => updateSelectedEmotion(
+                            Icons.sentiment_very_satisfied),
                         isSelected:
-                            selectedColor == Color.fromARGB(255, 248, 210, 208),
-                        onPressed: () => updateSelectedColor(
-                            Color.fromARGB(255, 248, 210, 208)),
+                            selectedEmotion == Icons.sentiment_very_satisfied,
                       ),
-                      ColorOption(
-                        color: Color.fromARGB(194, 211, 231, 212),
+                      EmotionOption(
+                        icon: Icons.sentiment_satisfied,
+                        colour: Color.fromARGB(255, 147, 248, 114),
+                        text: 'Good',
+                        onPressed: () =>
+                            updateSelectedEmotion(Icons.sentiment_satisfied),
                         isSelected:
-                            selectedColor == Color.fromARGB(194, 211, 231, 212),
-                        onPressed: () => updateSelectedColor(
-                            Color.fromARGB(194, 211, 231, 212)),
+                            selectedEmotion == Icons.sentiment_satisfied,
                       ),
-                      ColorOption(
-                        color: Color.fromARGB(197, 245, 210, 245),
+                      EmotionOption(
+                        icon: Icons.sentiment_neutral,
+                        colour: Color.fromARGB(255, 250, 189, 98),
+                        text: 'Normal',
+                        onPressed: () =>
+                            updateSelectedEmotion(Icons.sentiment_neutral),
+                        isSelected: selectedEmotion == Icons.sentiment_neutral,
+                      ),
+                      EmotionOption(
+                        icon: Icons.sentiment_dissatisfied,
+                        colour: Color.fromARGB(255, 116, 188, 251),
+                        text: 'Sad',
+                        onPressed: () =>
+                            updateSelectedEmotion(Icons.sentiment_dissatisfied),
                         isSelected:
-                            selectedColor == Color.fromARGB(197, 245, 210, 245),
-                        onPressed: () => updateSelectedColor(
-                          Color.fromARGB(197, 245, 210, 245),
+                            selectedEmotion == Icons.sentiment_dissatisfied,
+                      ),
+                      EmotionOption(
+                        icon: Icons.sentiment_very_dissatisfied,
+                        colour: Color.fromARGB(255, 245, 114, 105),
+                        text: 'Emotional',
+                        onPressed: () => updateSelectedEmotion(
+                            Icons.sentiment_very_dissatisfied),
+                        isSelected: selectedEmotion ==
+                            Icons.sentiment_very_dissatisfied,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today), // Add calendar icon
+                            SizedBox(
+                                width:
+                                    8), // Add some space between icon and text
+                            Flexible(
+                              // Use Flexible to allow text to wrap
+                              child: TextButton(
+                                onPressed: () async {
+                                  final pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: selectedDate ?? DateTime.now(),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2101),
+                                  );
+                                  if (pickedDate != null) {
+                                    // Use ref to update the selectedDateProvider
+                                    ref
+                                        .read(selectedDateProvider.notifier)
+                                        .state = pickedDate;
+                                  }
+                                },
+                                child: Text(
+                                  (selectedDate != null
+                                      ? '${selectedDate!.day.toString().padLeft(2, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.year}'
+                                      : 'Select a date'),
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      ColorOption(
-                        color: Color.fromARGB(186, 245, 241, 197),
-                        isSelected:
-                            selectedColor == Color.fromARGB(186, 245, 241, 197),
-                        onPressed: () => updateSelectedColor(
-                            Color.fromARGB(186, 245, 241, 197)),
+                      SizedBox(
+                          width:
+                              16), // Add some space between date and time pickers
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time), // Add time icon
+                            SizedBox(
+                                width:
+                                    8), // Add some space between icon and text
+                            Flexible(
+                              // Use Flexible to allow text to wrap
+                              child: TextButton(
+                                onPressed: () async {
+                                  final pickedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime:
+                                        selectedTime ?? TimeOfDay.now(),
+                                  );
+                                  if (pickedTime != null) {
+                                    // Use ref to update the selectedTimeProvider
+                                    ref
+                                        .read(selectedTimeProvider.notifier)
+                                        .state = pickedTime;
+                                  }
+                                },
+                                child: Text(
+                                  selectedTime != null
+                                      ? selectedTime!.format(context)
+                                      : 'Select a time',
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: const Text(
+                          'Reflections for today',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ColorOption(
+                            color: Color.fromARGB(255, 248, 210, 208),
+                            isSelected: selectedColor ==
+                                Color.fromARGB(255, 248, 210, 208),
+                            onPressed: () => updateSelectedColor(
+                                Color.fromARGB(255, 248, 210, 208)),
+                          ),
+                          ColorOption(
+                            color: Color.fromARGB(194, 211, 231, 212),
+                            isSelected: selectedColor ==
+                                Color.fromARGB(194, 211, 231, 212),
+                            onPressed: () => updateSelectedColor(
+                                Color.fromARGB(194, 211, 231, 212)),
+                          ),
+                          ColorOption(
+                            color: Color.fromARGB(197, 245, 210, 245),
+                            isSelected: selectedColor ==
+                                Color.fromARGB(197, 245, 210, 245),
+                            onPressed: () => updateSelectedColor(
+                              Color.fromARGB(197, 245, 210, 245),
+                            ),
+                          ),
+                          ColorOption(
+                            color: Color.fromARGB(186, 245, 241, 197),
+                            isSelected: selectedColor ==
+                                Color.fromARGB(186, 245, 241, 197),
+                            onPressed: () => updateSelectedColor(
+                                Color.fromARGB(186, 245, 241, 197)),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.cancel),
+                            iconSize: 23,
+                            onPressed: () {
+                              updateSelectedColor(
+                                  Color.fromARGB(197, 199, 222, 241));
+                            },
+                          ),
+                        ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.cancel),
-                        iconSize: 23,
+                        icon: const Icon(Icons.edit),
                         onPressed: () {
-                          updateSelectedColor(
-                              Color.fromARGB(197, 199, 222, 241));
+                          // Edit the journal entry
+                          // You can access the journal entry text using journalEntryController.text
                         },
                       ),
                     ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      // Edit the journal entry
-                      // You can access the journal entry text using journalEntryController.text
-                    },
-                  ),
-                ],
-              ),
 
-              // Color options for the text box
+                  // Color options for the text box
 
-              // Text box with selected color
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Container(
-                    width: double.infinity, // Set the width to fill the screen
-                    height: 350, // Set the height to your desired value
-                    decoration: BoxDecoration(
-                      color:
-                          selectedColor, // Background color based on selection
-                      border: Border.all(
-                          color: Color.fromARGB(255, 217, 224, 227),
-                          width: 2), // Add a border for a page-like appearance
-                      borderRadius:
-                          BorderRadius.circular(10), // Add rounded corners
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: journalEntryController,
-                        decoration: InputDecoration(
-                          hintText: 'Dear Allah, today has been...',
-                          border: InputBorder.none, // Remove the default border
+                  // Text box with selected color
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 350,
+                        decoration: BoxDecoration(
+                          color: selectedColor,
+                          border: Border.all(
+                              color: Color.fromARGB(255, 217, 224, 227),
+                              width: 2),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        maxLines: null, // Allows multiple lines of text
-                        enableSuggestions: true, // Allow content to be pasted
-                        style: TextStyle(
-                          fontSize: 16, // Increase text size for readability
-                          color: Colors.black, // Text color
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: journalEntryController,
+                            onChanged: (value) => ref
+                                .read(journalEntryProvider.notifier)
+                                .state = value,
+                            decoration: InputDecoration(
+                              hintText: 'Dear Allah, today has been...',
+                              border: InputBorder.none,
+                            ),
+                            maxLines: null,
+                            enableSuggestions: true,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16),
+
+                  Center(
+                    child: Container(
+                      width: 90,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            ref.read(saveJournalEntryProvider)(entryID);
+                          } catch (e) {
+                            // Handle the error (e.g., show an error message to the user)
+                            print('Error saving journal entry: $e');
+                          }
+                          // ref.read(saveJournalEntryProvider)();
+                          // Navigate to HomeScreen after saving
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => JournalListScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 113, 176, 205),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(fontSize: 17),
                         ),
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
-
-              SizedBox(height: 16),
-
-              Center(
-                child: Container(
-                  width: 90,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Save the journal entry as a draft
-                      // You can access the journal entry text using journalEntryController.text
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 113, 176, 205), // Set the background color
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30.0), // Make it rounder
-                      ),
-                    ),
-                    child: Text(
-                      'Save',
-                      style: TextStyle(fontSize: 17),
-                    ),
-                  ),
-                ),
-              )
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
 class EmotionOption extends StatefulWidget {
   final IconData icon;
-  final Color colour; // Change this to Color
+  final Color colour;
   final String text;
   final VoidCallback onPressed;
   final bool isSelected;
@@ -330,10 +356,22 @@ class _EmotionOptionState extends State<EmotionOption> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          widget.icon,
-          size: 36,
-          color: widget.colour, // Use the color based on selection
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: widget.isSelected ? Colors.black : Colors.transparent,
+              width: 2,
+            ),
+          ),
+          child: IconButton(
+            icon: Icon(
+              widget.icon,
+              size: 36,
+              color: widget.colour,
+            ),
+            onPressed: widget.onPressed,
+          ),
         ),
         SizedBox(
           height: 10,
@@ -341,7 +379,7 @@ class _EmotionOptionState extends State<EmotionOption> {
         Text(
           widget.text,
           style: TextStyle(
-            color: Colors.black, // Use the color based on selection
+            color: Colors.black,
           ),
         ),
       ],
@@ -368,18 +406,19 @@ class _ColorOptionState extends State<ColorOption> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: widget.onPressed,
-        child: Container(
-          width: 20, // Set the width to your desired size
-          height: 20, // Set the height to your desired size
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: widget.color,
-            border: Border.all(
-              color: widget.isSelected ? Colors.black : Colors.transparent,
-              width: 2,
-            ),
+      onTap: widget.onPressed,
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: widget.color,
+          border: Border.all(
+            color: widget.isSelected ? Colors.black : Colors.transparent,
+            width: 2,
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
