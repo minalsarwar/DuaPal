@@ -4,6 +4,7 @@ import 'package:flutter_application_1/networking/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
 import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
+import 'package:flutter_application_1/networking/journal_list.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
 import 'package:flutter_application_1/networking/settings.dart';
 import 'package:flutter_application_1/provider.dart';
@@ -175,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
               : _currentIndex == 3
                   ? EmotionsContent()
                   : _currentIndex == 2
-                      ? JournalEntryScreen()
+                      // ? JournalEntryScreen()
+                      ? JournalListScreen()
                       : HomeContent(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

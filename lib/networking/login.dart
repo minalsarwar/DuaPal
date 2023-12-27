@@ -366,7 +366,6 @@ class LoginPage extends ConsumerWidget {
                         emailController.text,
                         passwordController.text,
                       );
-
                       Navigator.pushNamed(context, '/homepage');
                     } catch (error) {
                       ref.refresh(
