@@ -3,6 +3,7 @@ import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
 import 'package:flutter_application_1/networking/favorites.dart';
+import 'package:flutter_application_1/networking/favourites_list.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
 import 'package:flutter_application_1/networking/journal_list.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
@@ -170,7 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: _currentIndex == 1
-          ? FavoritesScreen()
+          // ? FavoritesScreen()
+          ? FavListScreen()
           : _currentIndex == 4
               ? ReminderScreen()
               : _currentIndex == 3
