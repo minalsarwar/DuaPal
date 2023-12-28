@@ -20,11 +20,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-    ProviderScope(
-      child: const MyApp(),
-    ),
-  );
+
+  // runApp(
+  // ProviderScope(
+  //   child: const MyApp(),
+  // ),
+  runApp(const MyApp());
+  // );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,36 +34,87 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue, // Light theme
-      ),
-      //Adding dark theme
-      darkTheme: ThemeData.dark().copyWith(
-        primaryColor: Color.fromARGB(255, 90, 85, 85),
-      ),
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue, // Light theme
+        ),
+        //Adding dark theme
+        darkTheme: ThemeData.dark().copyWith(
+          primaryColor: Color.fromARGB(255, 90, 85, 85),
+        ),
 
-      //System's theme setting or use the light/dark theme explicitly.
-      themeMode: ThemeMode.system, // Or use ThemeMode.light or ThemeMode.dark
-      // home: const MyHomePage(title: 'Flutter Demo Home Page: Minal'),
-      // home: const HomeScreen(),
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/signup': (context) => SignUpPage(),
-        '/homepage': (context) => HomeScreen(),
-      },
-      initialRoute: '/login',
-      home: LoginPage(),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ar'), // Arabic
-        Locale('en'), // English
-      ],
-      locale: const Locale('en'),
+        //System's theme setting or use the light/dark theme explicitly.
+        themeMode: ThemeMode.system, // Or use ThemeMode.light or ThemeMode.dark
+        // home: const MyHomePage(title: 'Flutter Demo Home Page: Minal'),
+        // home: const HomeScreen(),
+        routes: {
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignUpPage(),
+          '/homepage': (context) => HomeScreen(),
+        },
+        initialRoute: '/login',
+        home: LoginPage(),
+
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ar'), // Arabic
+          Locale('en'), // English
+        ],
+        locale: const Locale('en'),
+      ),
     );
   }
 }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Initialize Firebase within MyApp
+//     WidgetsFlutterBinding.ensureInitialized();
+//     Firebase.initializeApp(
+//       options: DefaultFirebaseOptions.currentPlatform,
+//     );
+
+//     return ProviderScope(
+//       child: MaterialApp(
+//         title: 'Flutter Demo',
+//         theme: ThemeData(
+//           primarySwatch: Colors.blue, // Light theme
+//         ),
+//         // Adding dark theme
+//         darkTheme: ThemeData.dark().copyWith(
+//           primaryColor: Color.fromARGB(255, 90, 85, 85),
+//         ),
+
+//         // System's theme setting or use the light/dark theme explicitly.
+//         themeMode: ThemeMode.system, // Or use ThemeMode.light or ThemeMode.dark
+//         // home: const MyHomePage(title: 'Flutter Demo Home Page: Minal'),
+//         // home: const HomeScreen(),
+//         routes: {
+//           '/login': (context) => LoginPage(),
+//           '/signup': (context) => SignUpPage(),
+//           '/homepage': (context) => HomeScreen(),
+//         },
+//         initialRoute: '/login',
+//         home: LoginPage(),
+
+//         localizationsDelegates: const [
+//           GlobalMaterialLocalizations.delegate,
+//           GlobalWidgetsLocalizations.delegate,
+//         ],
+//         supportedLocales: const [
+//           Locale('ar'), // Arabic
+//           Locale('en'), // English
+//         ],
+//         locale: const Locale('en'),
+//       ),
+//     );
+//   }
+// }

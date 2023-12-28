@@ -383,8 +383,6 @@ final audioPositionProvider = StreamProvider<Duration?>((ref) {
   return audioPlayer.positionStream;
 });
 
-
-
 final audioStateProvider =
     StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
   return AudioStateNotifier(ref);
@@ -441,3 +439,4 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     super.dispose();
   }
 }
+

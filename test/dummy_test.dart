@@ -27,4 +27,3 @@
 //     await screenMatchesGolden(tester, 'first_screen_shot');
 //   });
 // }
-
