@@ -220,19 +220,12 @@
 //   }
 // }
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
-
-final emailControllerProvider = Provider<TextEditingController>((ref) {
-  return TextEditingController();
-});
-
-final passwordControllerProvider = Provider<TextEditingController>((ref) {
-  return TextEditingController();
-});
 
 class LoginPage extends ConsumerWidget {
   @override
@@ -367,7 +360,11 @@ class LoginPage extends ConsumerWidget {
                         emailController.text,
                         passwordController.text,
                       );
-                      Navigator.pushNamed(context, '/homepage');
+                      FirebaseAuth authentication = FirebaseAuth.instance;
+                      User? user = authentication.currentUser;
+                      ref.read(userIDProvider.notifier).state = user?.uid;
+                      ref.refresh(currentIndexProvider);
+                      Navigator.pushReplacementNamed(context, '/homepage');
                     } catch (error) {
                       ref.refresh(
                           emailControllerProvider); // Refresh to update the UI
