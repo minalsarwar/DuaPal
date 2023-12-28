@@ -282,42 +282,6 @@ class JournalEntryScreen extends ConsumerWidget {
                   ),
 
                   SizedBox(height: 16),
-
-                  // Center(
-                  //   child: Container(
-                  //     width: 90,
-                  //     height: 50,
-                  //     child: ElevatedButton(
-                  //       onPressed: () async {
-                  //         try {
-                  //           ref.read(saveJournalEntryProvider)(entryID);
-                  //         } catch (e) {
-                  //           // Handle the error (e.g., show an error message to the user)
-                  //           print('Error saving journal entry: $e');
-                  //         }
-                  //         // ref.read(saveJournalEntryProvider)();
-                  //         // Navigate to HomeScreen after saving
-                  //         ref.read(currentIndexProvider.notifier).state = 2;
-                  //         Navigator.of(context).pushReplacement(
-                  //           MaterialPageRoute(
-                  //             builder: (context) => HomeScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       style: ElevatedButton.styleFrom(
-                  //         backgroundColor:
-                  //             const Color.fromARGB(255, 113, 176, 205),
-                  //         shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(30.0),
-                  //         ),
-                  //       ),
-                  //       child: Text(
-                  //         'Save',
-                  //         style: TextStyle(fontSize: 17, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // )
                   Center(
                     child: Container(
                       width: 90,

@@ -64,8 +64,16 @@ final confirmPasswordControllerProvider =
   return TextEditingController();
 });
 
-final isEmailTooLongProvider = Provider<bool>((ref) {
-  return ref.watch(emailControllerProvider).text.length > 50;
+final isEmailValidProvider = StateProvider<bool>((ref) {
+  return true;
+});
+
+final isPasswordVisibleProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
+final doPasswordsMatchProvider = StateProvider<bool>((ref) {
+  return true;
 });
 
 final isMainSelectedProvider = StateProvider<bool>((ref) {

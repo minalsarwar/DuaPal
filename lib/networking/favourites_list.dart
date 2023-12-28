@@ -20,6 +20,15 @@ class FavListScreen extends ConsumerWidget {
         ),
         error: (error, stack) => Text('Error: $error'),
         data: (favs) {
+          if (favs.isEmpty) {
+            // Display a message when there are no favorites yet
+            return Center(
+              child: Text(
+                'No favorites yet!',
+                style: TextStyle(fontSize: 20, color: Colors.grey),
+              ),
+            );
+          }
           return ListView.builder(
             itemCount: favs.length,
             itemBuilder: (context, index) {

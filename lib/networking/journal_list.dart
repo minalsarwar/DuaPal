@@ -12,6 +12,15 @@ class JournalListScreen extends ConsumerWidget {
     return Scaffold(
       body: jorunalList.when(
         data: (journals) {
+          if (journals.isEmpty) {
+            // Display a message when there are no favorites yet
+            return Center(
+              child: Text(
+                'Start journaling!',
+                style: TextStyle(fontSize: 20, color: Colors.grey),
+              ),
+            );
+          }
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -85,10 +94,10 @@ class JournalListScreen extends ConsumerWidget {
                                   .dateTime); // Convert DateTime to TimeOfDay
                           ref.read(selectedColorProvider.notifier).state =
                               journal.color;
-                          Navigator.of(context).pushReplacement(
+                          Navigator.push(
+                            context,
                             MaterialPageRoute(
-                              builder: (context) => JournalEntryScreen(),
-                            ),
+                                builder: (context) => JournalEntryScreen()),
                           );
                         },
                       ),
@@ -114,10 +123,9 @@ class JournalListScreen extends ConsumerWidget {
           ref.refresh(selectedDateProvider);
           ref.refresh(selectedTimeProvider);
           ref.refresh(selectedColorProvider);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => JournalEntryScreen(),
-            ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => JournalEntryScreen()),
           );
         },
         child: Icon(

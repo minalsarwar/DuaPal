@@ -99,6 +99,16 @@ class HomeScreen extends ConsumerWidget {
                 // Refresh controllers and navigate to login
                 ref.refresh(emailControllerProvider);
                 ref.refresh(passwordControllerProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Signing out',
+                      textAlign: TextAlign.center,
+                    ),
+                    duration: Duration(seconds: 1),
+                    backgroundColor: CustomColors.mainColor,
+                  ),
+                );
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/login', (route) => false);
               } catch (error) {

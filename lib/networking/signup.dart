@@ -13,13 +13,26 @@ class SignUpPage extends ConsumerWidget {
     final passwordController = ref.read(passwordControllerProvider);
     final confirmPasswordController =
         ref.read(confirmPasswordControllerProvider);
-    final isEmailTooLong = ref.watch(isEmailTooLongProvider);
+    final isPasswordVisible = ref.watch(isPasswordVisibleProvider);
+    final doPasswordsMatch = ref.watch(doPasswordsMatchProvider);
+    final isEmailValid = ref.watch(isEmailValidProvider);
 
     void validateEmail(String value) {
-      if (value.length > 50) {
-        ref.read(emailControllerProvider).text = value.substring(0, 50);
-        ref.refresh(emailControllerProvider);
+      // Check if the email is valid
+      if (!value.isValidEmail()) {
+        // Update the state to reflect the email error
+        ref.read(isEmailValidProvider.notifier).state = false;
+      } else {
+        ref.read(isEmailValidProvider.notifier).state = true;
       }
+    }
+
+    void checkPasswordMatch() {
+      final bool passwordsMatch =
+          passwordController.text == confirmPasswordController.text;
+
+      // Update the state to reflect whether passwords match
+      ref.read(doPasswordsMatchProvider.notifier).state = passwordsMatch;
     }
 
     return Scaffold(
@@ -55,6 +68,7 @@ class SignUpPage extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
+                  maxLength: 50,
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -63,13 +77,12 @@ class SignUpPage extends ConsumerWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: BorderSide(
-                        color: isEmailTooLong ? Colors.red : Colors.black,
+                        color: Colors.black,
                         width: 1.0,
                       ),
                     ),
-                    errorText: isEmailTooLong
-                        ? 'Email can only be of 50 characters'
-                        : null,
+                    // Display an error message if the email is invalid
+                    errorText: isEmailValid ? null : 'Invalid email address',
                   ),
                   onChanged: (value) {
                     validateEmail(value);
@@ -77,63 +90,97 @@ class SignUpPage extends ConsumerWidget {
                 ),
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 35.0, vertical: 5.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '${emailController.text.length}/50',
-                  style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Color.fromARGB(255, 196, 189, 189)
-                        : Color.fromARGB(226, 86, 86, 86),
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
             SizedBox(
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: TextField(
-                        maxLength: 20,
-                        obscureText: true,
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 15.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.0),
+                    TextField(
+                      maxLength: 20,
+                      obscureText: !isPasswordVisible,
+                      controller: ref.read(passwordControllerProvider),
+                      onChanged: (password) {
+                        // Call the function to check password match
+                        checkPasswordMatch();
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 15.0,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.0),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color.fromARGB(255, 62, 61, 61),
                           ),
+                          onPressed: () {
+                            ref.read(isPasswordVisibleProvider.notifier).state =
+                                !ref
+                                    .read(isPasswordVisibleProvider.notifier)
+                                    .state;
+                          },
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        maxLength: 20,
-                        obscureText: true,
-                        controller: confirmPasswordController,
-                        decoration: InputDecoration(
-                          labelText: 'Confirm Password',
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 15.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.0),
+                    TextField(
+                      maxLength: 20,
+                      obscureText: !isPasswordVisible,
+                      controller: ref.read(confirmPasswordControllerProvider),
+                      onChanged: (confirmPassword) {
+                        // Call the function to check password match
+                        checkPasswordMatch();
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Confirm Password',
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 15.0,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.0),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color.fromARGB(255, 62, 61, 61),
                           ),
+                          onPressed: () {
+                            ref.read(isPasswordVisibleProvider.notifier).state =
+                                !ref
+                                    .read(isPasswordVisibleProvider.notifier)
+                                    .state;
+                          },
                         ),
                       ),
                     ),
+
+                    // Show an error message if passwords don't match
+                    if (ref.read(passwordControllerProvider).text.isNotEmpty &&
+                        ref
+                            .read(confirmPasswordControllerProvider)
+                            .text
+                            .isNotEmpty &&
+                        !doPasswordsMatch)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Passwords do not match!',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -145,40 +192,43 @@ class SignUpPage extends ConsumerWidget {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  // onPressed: () async {
-                  //   await ApplicationState().signUpWithFirebase(
-                  //       emailController.text, passwordController.text);
-                  //   // Navigator.pushNamed(context, '/login');
-                  //   if (FirebaseAuth.instance.currentUser != null) {
-                  //     // If signed up, navigate to the login screen
-                  //     Navigator.pushNamed(context, '/login');
-                  //   } else {
-                  //     // If not signed up, print a message (you can replace this with your desired action)
-                  //     print('Sign up unsuccessful');
-                  //   }
-                  // },
                   onPressed: () async {
-                    if (passwordController.text ==
-                        confirmPasswordController.text) {
-                      // Passwords match, proceed with registration
-                      await auth.signUpWithEmailAndPassword(
-                        emailController.text,
-                        passwordController.text,
-                      );
+                    try {
+                      if (passwordController.text ==
+                          confirmPasswordController.text) {
+                        // Passwords match, proceed with registration
+                        await auth.signUpWithEmailAndPassword(
+                          emailController.text,
+                          passwordController.text,
+                        );
 
-                      if (FirebaseAuth.instance.currentUser != null) {
-                        // If signed up, navigate to the login screen
-                        Navigator.pushNamed(context, '/login');
+                        if (FirebaseAuth.instance.currentUser != null) {
+                          // If signed up, navigate to the login screen
+                          Navigator.pushNamed(context, '/login');
+                        } else {
+                          // If not signed up, print a message (you can replace this with your desired action)
+                          print('Sign up unsuccessful');
+                        }
                       } else {
-                        // If not signed up, print a message (you can replace this with your desired action)
-                        print('Sign up unsuccessful');
+                        // Passwords do not match, show an error or take appropriate action
+                        print('Passwords do not match');
                       }
-                    } else {
-                      // Passwords do not match, show an error or take appropriate action
-                      print('Passwords do not match');
+                    } catch (e) {
+                      // Handle exceptions here, e.g., display an error message using SnackBar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Sign up failed',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
-
                   style: ElevatedButton.styleFrom(
                     backgroundColor: CustomColors.mainColor,
                     shape: RoundedRectangleBorder(

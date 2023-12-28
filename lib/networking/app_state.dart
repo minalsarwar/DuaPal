@@ -14,7 +14,7 @@ class AuthService {
       return userCredential.user;
     } catch (e) {
       print('Error signing in: $e');
-      return null;
+      throw e;
     }
   }
 
@@ -31,7 +31,7 @@ class AuthService {
       return userCredential.user;
     } catch (e) {
       print('Error signing up: $e');
-      return null;
+      throw e;
     }
   }
 

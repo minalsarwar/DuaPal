@@ -233,9 +233,8 @@ class LoginPage extends ConsumerWidget {
     final auth = ref.read(authServiceProvider);
     final emailController = ref.read(emailControllerProvider);
     final passwordController = ref.read(passwordControllerProvider);
-
+    final isPasswordVisible = ref.watch(isPasswordVisibleProvider);
     bool isEmailTooLong = false;
-    bool isPasswordIncorrect = false;
 
     void validateEmail(String value) {
       if (value.length > 50) {
@@ -324,29 +323,33 @@ class LoginPage extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   maxLength: 20,
-                  obscureText: true,
+                  obscureText: !isPasswordVisible,
                   controller: passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.black, width: 1.0),
-                    ),
-                  ),
+                      labelText: 'Password',
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 15.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.black, width: 1.0),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.fromARGB(255, 62, 61, 61),
+                        ),
+                        onPressed: () {
+                          ref.read(isPasswordVisibleProvider.notifier).state =
+                              !ref
+                                  .read(isPasswordVisibleProvider.notifier)
+                                  .state;
+                        },
+                      )),
                 ),
               ),
             ),
-            if (isPasswordIncorrect)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 25.0, vertical: 5.0),
-                child: Text(
-                  'Incorrect credentials/email/password entered!',
-                  style: TextStyle(color: Colors.red, fontSize: 14),
-                ),
-              ),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
@@ -366,9 +369,18 @@ class LoginPage extends ConsumerWidget {
                       ref.refresh(currentIndexProvider);
                       Navigator.pushReplacementNamed(context, '/homepage');
                     } catch (error) {
-                      ref.refresh(
-                          emailControllerProvider); // Refresh to update the UI
-                      isPasswordIncorrect = true;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Incorrect credentials entered',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -394,6 +406,9 @@ class LoginPage extends ConsumerWidget {
                   Text("Don't have an account yet? "),
                   GestureDetector(
                     onTap: () {
+                      ref.refresh(emailControllerProvider);
+                      ref.refresh(passwordControllerProvider);
+                      ref.refresh(isPasswordVisibleProvider);
                       Navigator.pushNamed(context, '/signup');
                     },
                     child: Text(
