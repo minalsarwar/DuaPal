@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -48,23 +49,56 @@ class HomeScreen extends ConsumerWidget {
         break;
     }
 
-    Widget buildSocialIcon(String text, IconData iconData) {
-      return Column(
-        children: [
-          Ink(
-            decoration: ShapeDecoration(
-              color: Colors.grey[200],
-              shape: CircleBorder(),
-            ),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: Icon(
-                iconData,
-                color: CustomColors.mainColor,
+    void launchSocialMediaLink(String label) async {
+      Uri url;
+      switch (label) {
+        case 'facebook':
+          url = Uri.parse('https://www.facebook.com/alifewithallah/');
+          break;
+        case 'instagram':
+          url = Uri.parse('https://www.instagram.com/alifewithallah/?hl=en');
+          break;
+        case 'twitter':
+          url = Uri.parse(
+              'https://twitter.com/alifewithallah?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor');
+          break;
+        case 'telegram':
+          url = Uri.parse('https://t.me/alifewithallah');
+          break;
+        case 'whatsapp':
+          url = Uri.parse('https://chat.whatsapp.com/IV3CEj2q5AO2LVkNstaMir');
+          break;
+        default:
+          return; // Do nothing for unknown labels
+      }
+
+      if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+      }
+    }
+
+    Widget buildSocialIcon(String label, IconData icon) {
+      return GestureDetector(
+        onTap: () {
+          launchSocialMediaLink(label);
+        },
+        child: Column(
+          children: [
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.grey[200],
+                shape: CircleBorder(),
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                child: Icon(
+                  icon,
+                  color: CustomColors.mainColor,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
@@ -136,13 +170,16 @@ class HomeScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(2.0),
                     child: Image.asset('android/assets/appLogo.png',
-                        height: 70, width: 60),
+                        height: 80, width: 70),
                   ),
                   Text('Dua Pal',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  Text('رفيق الدعاء',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 ],
               ),
             ),
