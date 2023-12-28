@@ -65,8 +65,16 @@ final confirmPasswordControllerProvider =
   return TextEditingController();
 });
 
-final isEmailTooLongProvider = Provider<bool>((ref) {
-  return ref.watch(emailControllerProvider).text.length > 50;
+final isEmailValidProvider = StateProvider<bool>((ref) {
+  return true;
+});
+
+final isPasswordVisibleProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
+final doPasswordsMatchProvider = StateProvider<bool>((ref) {
+  return true;
 });
 
 final isMainSelectedProvider = StateProvider<bool>((ref) {
@@ -94,7 +102,7 @@ final selectedTimeProvider = StateProvider<TimeOfDay?>((ref) => null);
 
 // Provider for managing the selected color
 final selectedColorProvider =
-    StateProvider<Color>((ref) => Color.fromARGB(197, 199, 222, 241));
+    StateProvider<Color>((ref) => Color.fromARGB(197, 228, 244, 243));
 
 final entryIdProvider = StateProvider<String?>((ref) => null);
 
@@ -105,7 +113,7 @@ final saveJournalEntryProvider = Provider<void Function(String?)>(
     final selectedDate = ref.read(selectedDateProvider.notifier).state;
     final selectedTime = ref.read(selectedTimeProvider.notifier).state;
     final selectedColor = ref.read(selectedColorProvider.notifier).state;
-    String? userID = ref.read(userIDProvider);
+    String? userID = ref.watch(userIDProvider);
 
     if (journalEntry.isNotEmpty &&
         selectedEmotion != null &&
@@ -172,7 +180,7 @@ String getEmotionText(IconData? selectedEmotion) {
 }
 
 final journalsProvider = StreamProvider<List<JournalModel>>((ref) {
-  String? userID = ref.read(userIDProvider);
+  String? userID = ref.watch(userIDProvider);
   print('USER ID: ${userID ?? "User not signed in"}');
 
   Query query = FirebaseFirestore.instance
@@ -195,7 +203,7 @@ final journalsProvider = StreamProvider<List<JournalModel>>((ref) {
 });
 
 // Provider for user ID
-final userIDProvider = Provider<String?>((ref) {
+final userIDProvider = StateProvider<String?>((ref) {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
 
@@ -330,7 +338,7 @@ class Reminder {
 
 //////
 final favProvider = StreamProvider<List<FavModel>>((ref) {
-  String? userID = ref.read(userIDProvider);
+  String? userID = ref.watch(userIDProvider);
   print('USER ID: ${userID ?? "User not signed in"}');
 
   Query query = FirebaseFirestore.instance

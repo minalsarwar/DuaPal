@@ -234,17 +234,10 @@ class JournalEntryScreen extends ConsumerWidget {
                             iconSize: 23,
                             onPressed: () {
                               updateSelectedColor(
-                                  Color.fromARGB(197, 199, 222, 241));
+                                  Color.fromARGB(197, 228, 244, 243));
                             },
                           ),
                         ],
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          // Edit the journal entry
-                          // You can access the journal entry text using journalEntryController.text
-                        },
                       ),
                     ],
                   ),
@@ -289,22 +282,90 @@ class JournalEntryScreen extends ConsumerWidget {
                   ),
 
                   SizedBox(height: 16),
-
                   Center(
                     child: Container(
                       width: 90,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () async {
+                          // Check if an emotion is selected
+                          if (selectedEmotion == null) {
+                            // Show an error message for missing emotion
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please select an emotion',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 17)),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: CustomColors.mainColor,
+                              ),
+                            );
+                            return;
+                          }
+
+                          // Check if a date is selected
+                          if (selectedDate == null) {
+                            // Show an error message for missing date
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Please select a date',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 17)),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: CustomColors.mainColor),
+                            );
+                            return;
+                          }
+
+                          // Check if a time is selected
+                          if (selectedTime == null) {
+                            // Show an error message for missing time
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Please select a time',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 17)),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: CustomColors.mainColor),
+                            );
+                            return;
+                          }
+
+                          // Check if the text body is null or empty
+                          if (journalEntryController.text == null ||
+                              journalEntryController.text.isEmpty) {
+                            // Show an error message for missing text body
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                    'Please enter your reflections',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: CustomColors.mainColor),
+                            );
+                            return;
+                          }
+
                           try {
+                            // Call the provider function to save the journal entry
                             ref.read(saveJournalEntryProvider)(entryID);
                           } catch (e) {
                             // Handle the error (e.g., show an error message to the user)
-                            print('Error saving journal entry: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error saving journal entry: $e'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            return;
                           }
-                          // ref.read(saveJournalEntryProvider)();
-                          // Navigate to HomeScreen after saving
+
+                          // Update the current index to navigate to the desired screen
                           ref.read(currentIndexProvider.notifier).state = 2;
+
+                          // Navigate to HomeScreen after saving
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => HomeScreen(),
@@ -312,8 +373,7 @@ class JournalEntryScreen extends ConsumerWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 113, 176, 205),
+                          backgroundColor: CustomColors.mainColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),

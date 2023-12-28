@@ -27,7 +27,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int currentIndex = ref.watch(currentIndexProvider);
-
+    final auth = ref.read(authServiceProvider);
     String appBarTitle = 'Home';
 
     switch (currentIndex) {
@@ -91,6 +91,34 @@ class HomeScreen extends ConsumerWidget {
                 context,
                 MaterialPageRoute(builder: (context) => SettingsScreen()),
               );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              try {
+                await auth.signOut();
+                // Wait for the sign-out operation to complete
+                await Future.delayed(Duration.zero);
+                // Refresh controllers and navigate to login
+                ref.refresh(emailControllerProvider);
+                ref.refresh(passwordControllerProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Signing out',
+                      textAlign: TextAlign.center,
+                    ),
+                    duration: Duration(seconds: 1),
+                    backgroundColor: CustomColors.mainColor,
+                  ),
+                );
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login', (route) => false);
+              } catch (error) {
+                print("Error signing out: $error");
+                // Handle any errors that occur during sign out
+              }
             },
           ),
         ],
