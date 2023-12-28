@@ -66,6 +66,8 @@ dependencies:
   just_audio: ^0.9.36
   audioplayers: ^5.2.1
   golden_toolkit: ^0.15.0
+  vibration: ^1.8.4
+  flutter_email_sender: ^6.0.2
   # social_share: ^2.3.1
   # flutter_share_me: ^1.4.0
 

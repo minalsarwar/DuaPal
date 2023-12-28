@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/networking/about.dart';
 import 'package:flutter_application_1/networking/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
+import 'package:flutter_application_1/networking/faqs.dart';
 import 'package:flutter_application_1/networking/favorites.dart';
 import 'package:flutter_application_1/networking/favourites_list.dart';
+import 'package:flutter_application_1/networking/feedback.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
 import 'package:flutter_application_1/networking/journal_list.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
 import 'package:flutter_application_1/networking/settings.dart';
+import 'package:flutter_application_1/networking/tasbeeh_counter.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -119,15 +123,17 @@ class HomeScreen extends ConsumerWidget {
                 'android/assets/tasbih.png', // Adjust the path to the icon
                 width: 30, // Specify the width of the icon
                 height: 30, // Specify the height of the icon
-                color: Color.fromARGB(
-                    255, 113, 176, 205), // Set the desired icon color
+                color: CustomColors.mainColor, // Set the desired icon color
               ),
               title: Text(
                 'Tasbih Counter',
                 style: TextStyle(fontSize: 16),
               ),
               onTap: () {
-                // Handle Tasbih Counter action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TasbeehCounter()),
+                );
               },
             ),
             ListTile(
@@ -135,7 +141,10 @@ class HomeScreen extends ConsumerWidget {
                   size: 28, color: CustomColors.mainColor),
               title: Text('Feedback', style: TextStyle(fontSize: 16)),
               onTap: () {
-                // Handle Feedback action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FeedbackScreen()),
+                );
               },
             ),
             ListTile(
@@ -143,7 +152,10 @@ class HomeScreen extends ConsumerWidget {
                   size: 28, color: CustomColors.mainColor),
               title: Text('FAQs', style: TextStyle(fontSize: 16)),
               onTap: () {
-                // Handle FAQs action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FaqScreen()),
+                );
               },
             ),
             ListTile(
@@ -151,7 +163,10 @@ class HomeScreen extends ConsumerWidget {
                   size: 28, color: CustomColors.mainColor),
               title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
               onTap: () {
-                // Handle FAQs action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AboutScreen()),
+                );
               },
             ),
             const SizedBox(height: 325),

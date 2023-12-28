@@ -15,7 +15,7 @@ class FavListScreen extends ConsumerWidget {
       body: favList.when(
         loading: () => Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
+            // valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
           ),
         ),
         error: (error, stack) => Text('Error: $error'),

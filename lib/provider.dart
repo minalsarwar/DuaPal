@@ -6,6 +6,7 @@ import 'package:flutter_application_1/model/fav_model.dart';
 import 'package:flutter_application_1/model/journal_model.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 
 final authProvider = StateProvider<User?>((ref) {
   return null;
@@ -362,3 +363,73 @@ final deleteFavProvider = Provider<void Function(String)>((ref) {
     }
   };
 });
+
+//audio
+
+final audioPlayerProvider = Provider<AudioPlayer>((ref) {
+  return AudioPlayer();
+});
+
+final audioPositionProvider = StreamProvider<Duration?>((ref) {
+  final audioPlayer = ref.watch(audioPlayerProvider);
+  return audioPlayer.positionStream;
+});
+
+
+
+final audioStateProvider =
+    StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
+  return AudioStateNotifier(ref);
+});
+
+class AudioState {
+  final bool isPlaying;
+  final Duration position;
+  final Duration duration;
+
+  AudioState({
+    required this.isPlaying,
+    required this.position,
+    required this.duration,
+  });
+}
+
+class AudioStateNotifier extends StateNotifier<AudioState> {
+  final Ref _ref;
+
+  AudioStateNotifier(this._ref)
+      : super(AudioState(
+            isPlaying: false,
+            position: Duration.zero,
+            duration: Duration.zero));
+
+  AudioPlayer get _audioPlayer => _ref.read(audioPlayerProvider);
+
+  Future<void> playPause() async {
+    if (_audioPlayer.playing) {
+      await _audioPlayer.pause();
+    } else {
+      await _audioPlayer.play();
+    }
+    _updateState();
+  }
+
+  Future<void> seekTo(Duration position) async {
+    await _audioPlayer.seek(position);
+    _updateState();
+  }
+
+  void _updateState() {
+    state = AudioState(
+      isPlaying: _audioPlayer.playing,
+      position: _audioPlayer.position,
+      duration: _audioPlayer.duration ?? Duration.zero,
+    );
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+}
