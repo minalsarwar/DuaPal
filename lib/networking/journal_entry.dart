@@ -233,8 +233,7 @@ class JournalEntryScreen extends ConsumerWidget {
                             icon: const Icon(Icons.cancel),
                             iconSize: 23,
                             onPressed: () {
-                              updateSelectedColor(
-                                  Color.fromARGB(197, 228, 244, 243));
+                              updateSelectedColor(CustomColors.lightColor);
                             },
                           ),
                         ],

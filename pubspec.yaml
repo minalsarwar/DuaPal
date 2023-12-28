@@ -68,6 +68,7 @@ dependencies:
   golden_toolkit: ^0.15.0
   vibration: ^1.8.4
   flutter_email_sender: ^6.0.2
+  google_fonts: ^6.1.0
   flutter_local_notifications: ^16.3.0
   # social_share: ^2.3.1
   # flutter_share_me: ^1.4.0
