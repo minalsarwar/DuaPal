@@ -10,4 +10,5 @@ extension EmailValidator on String {
 
 class CustomColors {
   static const Color mainColor = Color.fromARGB(203, 61, 179, 169);
+  static const Color lightColor = Color.fromARGB(197, 228, 244, 243);
 }
