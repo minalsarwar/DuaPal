@@ -3,12 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
-import 'package:flutter_application_1/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
 
-class DetailScreen extends ConsumerStatefulWidget {
+class DetailScreen extends StatefulWidget {
   final String title;
   final String id;
   final String arabic;
@@ -42,9 +40,8 @@ class DetailScreen extends ConsumerStatefulWidget {
   _DetailScreenState createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends ConsumerState<DetailScreen> {
+class _DetailScreenState extends State<DetailScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-
   late String arabic;
   late String transliteration;
   late String translation;
@@ -66,11 +63,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     count = widget.count;
     originalCount = count;
     explanation = widget.explanation;
-
-    final audioPlayer = ref.read(audioPlayerProvider);
-    audioPlayer.positionStream.listen((position) {
-      // No need for setState here; the UI will be automatically updated
-    });
 
     AuthService().getUserId().then((userId) async {
       if (userId != null) {
@@ -206,13 +198,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
 
-  Widget mediaPlayerDesign(WidgetRef ref) {
-    final audioPositionData = ref.watch(audioPositionProvider);
-    final isPlaying = ref.read(audioStateProvider).isPlaying;
-    final position = audioPositionData?.value ?? Duration.zero;
-    final duration = ref.read(audioStateProvider).duration;
-
+  Widget mediaPlayerDesign() {
     return Container(
+      height: 250,
       padding: EdgeInsets.all(16.0),
       child: Column(
         children: [
@@ -240,52 +228,40 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
               // No need to call setState here, it's handled by the StreamBuilder
             },
           ),
-          Column(
-            children: [
-              Slider(
-                value: position.inMilliseconds.toDouble(),
-                onChanged: (value) {
-                  ref
-                      .read(audioStateProvider.notifier)
-                      .seekTo(Duration(milliseconds: value.toInt()));
-                },
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble(),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      formatDuration(position),
-                      style: TextStyle(fontSize: 12),
+          StreamBuilder<Duration>(
+            stream: _audioPlayer.positionStream,
+            builder: (context, snapshot) {
+              final position = snapshot.data ?? Duration.zero;
+              final duration = _audioPlayer.duration ?? Duration.zero;
+              return Column(
+                children: [
+                  Slider(
+                    value: position.inMilliseconds.toDouble(),
+                    onChanged: (value) {
+                      _audioPlayer.seek(Duration(milliseconds: value.toInt()));
+                    },
+                    min: 0.0,
+                    max: duration.inMilliseconds.toDouble(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          formatDuration(position),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        Text(
+                          formatDuration(duration),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
                     ),
-                    Text(
-                      formatDuration(duration),
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.restart_alt),
-                onPressed: () {
-                  ref.read(audioStateProvider.notifier).seekTo(Duration.zero);
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.speed),
-                onPressed: () {
-                  // Handle playback speed functionality here
-                },
-              ),
-            ],
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -374,7 +350,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                   builder: (context) {
                     // Play audio when the bottom sheet is displayed
                     _playAudio();
-                    return mediaPlayerDesign(ref);
+                    return mediaPlayerDesign();
                   },
                 );
               },
