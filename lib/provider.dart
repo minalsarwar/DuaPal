@@ -442,7 +442,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 }
 
 //settings
-final arabicTextSizeProvider = StateProvider<double>((ref) => 16.0);
+final arabicTextSizeProvider = StateProvider<double>((ref) => 25.0);
 final transliterationTextSizeProvider = StateProvider<double>((ref) => 16.0);
 final translationTextSizeProvider = StateProvider<double>((ref) => 16.0);
 final sourceTextSizeProvider = StateProvider<double>((ref) => 16.0);
