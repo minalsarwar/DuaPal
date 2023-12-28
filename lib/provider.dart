@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/model/dua_model.dart';
 import 'package:flutter_application_1/model/fav_model.dart';
 import 'package:flutter_application_1/model/journal_model.dart';
@@ -102,7 +103,7 @@ final selectedTimeProvider = StateProvider<TimeOfDay?>((ref) => null);
 
 // Provider for managing the selected color
 final selectedColorProvider =
-    StateProvider<Color>((ref) => Color.fromARGB(197, 228, 244, 243));
+    StateProvider<Color>((ref) => CustomColors.lightColor);
 
 final entryIdProvider = StateProvider<String?>((ref) => null);
 
@@ -383,8 +384,6 @@ final audioPositionProvider = StreamProvider<Duration?>((ref) {
   return audioPlayer.positionStream;
 });
 
-
-
 final audioStateProvider =
     StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
   return AudioStateNotifier(ref);
@@ -441,3 +440,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     super.dispose();
   }
 }
+
+//settings
+final arabicTextSizeProvider = StateProvider<double>((ref) => 16.0);
+final transliterationTextSizeProvider = StateProvider<double>((ref) => 16.0);
+final translationTextSizeProvider = StateProvider<double>((ref) => 16.0);
+final sourceTextSizeProvider = StateProvider<double>((ref) => 16.0);
+final showTranslationsProvider = StateProvider<bool>((ref) => true);
+final showTransliterationProvider = StateProvider<bool>((ref) => true);
+final selectedArabicFontProvider = StateProvider<String>((ref) => "Naskh");

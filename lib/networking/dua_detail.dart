@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:flutter_application_1/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -278,176 +280,198 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            widget.title,
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+    return Consumer(builder: (context, ref, child) {
+      double arabicTextSize = ref.watch(arabicTextSizeProvider);
+      double transliterationTextSize =
+          ref.watch(transliterationTextSizeProvider);
+      double translationTextSize = ref.watch(translationTextSizeProvider);
+      double sourceTextSize = ref.watch(sourceTextSizeProvider);
+      bool showTranslations = ref.watch(showTranslationsProvider);
+      bool showTransliteration = ref.watch(showTransliterationProvider);
+      String selectedArabicFont = ref.watch(selectedArabicFontProvider);
+
+      return Scaffold(
+        appBar: AppBar(
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: CustomColors.mainColor,
+          centerTitle: true,
+          iconTheme: IconThemeData(
+            color: Colors.white,
           ),
         ),
-        backgroundColor: CustomColors.mainColor,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                arabic,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.end,
-              ),
-              SizedBox(height: 20),
-              Text(
-                transliteration,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-              ),
-              SizedBox(height: 20),
-              Text(
-                translation,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Icon(Icons.bubble_chart_rounded, color: Colors.grey),
-                  SizedBox(width: 2),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  arabic,
+                  style: TextStyle(
+                      fontSize: arabicTextSize, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.end,
+                ),
+                SizedBox(height: 20),
+                if (showTransliteration)
                   Text(
-                    'Source',
+                    transliteration,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
+                        fontSize: transliterationTextSize,
+                        fontWeight: FontWeight.normal),
                   ),
-                ],
-              ),
-              Text(
-                source,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: InkWell(
-              onTap: () async {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    // Play audio when the bottom sheet is displayed
-                    _playAudio();
-                    return mediaPlayerDesign();
-                  },
-                );
-              },
-              child: Icon(Icons.play_arrow),
-            ),
-            label: 'Play',
-          ),
-          BottomNavigationBarItem(
-            icon: InkWell(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SingleChildScrollView(
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          '${explanation.isNotEmpty ? 'Explanation:\n\n$explanation' : "No explanation available yet"}',
-                          style: TextStyle(fontSize: 18.0),
-                        ),
+                SizedBox(height: 20),
+                if (showTranslations)
+                  Text(
+                    translation,
+                    style: TextStyle(
+                        fontSize: translationTextSize,
+                        fontWeight: FontWeight.normal),
+                  ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(Icons.bubble_chart_rounded, color: Colors.grey),
+                    SizedBox(width: 2),
+                    Text(
+                      'Source',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
                       ),
-                    );
-                  },
-                );
-              },
-              child: Icon(Icons.info),
-            ),
-            label: 'Info',
-          ),
-          BottomNavigationBarItem(
-            icon: InkWell(
-              onTap: () {
-                setState(() {
-                  if (count > 0) {
-                    count -= 1;
-                  }
-                });
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: CustomColors.mainColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // changes position of shadow
                     ),
                   ],
                 ),
-                child: Center(
-                  child: count > 0
-                      ? Text(
-                          count.toString(),
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        )
-                      : IconButton(
-                          icon: Icon(Icons.restart_alt, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              count = originalCount;
-                            });
-                          },
+                Text(
+                  source,
+                  style: TextStyle(
+                      fontSize: sourceTextSize, fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () async {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      // Play audio when the bottom sheet is displayed
+                      _playAudio();
+                      return mediaPlayerDesign();
+                    },
+                  );
+                },
+                child: Icon(Icons.play_arrow),
+              ),
+              label: 'Play',
+            ),
+            BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            '${explanation.isNotEmpty ? 'Explanation:\n\n$explanation' : "No explanation available yet"}',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
                         ),
+                      );
+                    },
+                  );
+                },
+                child: Icon(Icons.info),
+              ),
+              label: 'Info',
+            ),
+            BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (count > 0) {
+                      count -= 1;
+                    }
+                  });
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColors.mainColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: count > 0
+                        ? Text(
+                            count.toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.restart_alt, color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                count = originalCount;
+                              });
+                            },
+                          ),
+                  ),
                 ),
               ),
+              label: 'Count',
             ),
-            label: 'Count',
-          ),
-          BottomNavigationBarItem(
-            icon: InkWell(
-              onTap: () {
-                String title = widget.title;
-                Share.share(
-                    '$title\n\n$arabic\n\nRepeat ${count == 1 ? "1 time" : "$count times"}\n\n$transliteration\n\n$translation\n\nSource:\n$source');
-              },
-              child: Icon(Icons.share),
-            ),
-            label: 'Share',
-          ),
-          BottomNavigationBarItem(
-            icon: InkWell(
-              onTap: () {
-                toggleFavoriteStatus();
-              },
-              child: Icon(
-                Icons.favorite,
-                color: isFavorite ? Colors.red : null,
+            BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () {
+                  String title = widget.title;
+                  Share.share(
+                      '$title\n\n$arabic\n\nRepeat ${count == 1 ? "1 time" : "$count times"}\n\n$transliteration\n\n$translation\n\nSource:\n$source');
+                },
+                child: Icon(Icons.share),
               ),
+              label: 'Share',
             ),
-            label: 'Favorite',
-          ),
-        ],
-      ),
-    );
+            BottomNavigationBarItem(
+              icon: InkWell(
+                onTap: () {
+                  toggleFavoriteStatus();
+                },
+                child: Icon(
+                  Icons.favorite,
+                  color: isFavorite ? Colors.red : null,
+                ),
+              ),
+              label: 'Favorite',
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
