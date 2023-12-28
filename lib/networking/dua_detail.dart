@@ -54,6 +54,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   int _currentIndex = 0;
   late int originalCount;
   bool isFavorite = false;
+  Duration _currentPosition = Duration.zero;
 
   @override
   void initState() {
@@ -83,6 +84,8 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       }
     });
   }
+
+  //Favorites code
 
   Future<void> toggleFavoriteStatus() async {
     String? userId = await AuthService().getUserId();
@@ -140,21 +143,40 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           .delete();
     }
   }
+  //end of favorite code
 
+  // Future<void> _playAudio() async {
+  //   try {
+  //     String audioUrl = await _getAudioUrl(widget.id);
+
+  //     // Set the URL and play, starting from the saved position
+  //     await _audioPlayer.setUrl(audioUrl);
+  //     await _audioPlayer.seek(_currentPosition);
+  //     await _audioPlayer.play();
+
+  //     // Update the UI when the player state changes
+  //     setState(() {});
+  //   } catch (e) {
+  //     print("Error playing audio: $e");
+  //   }
   // }
   Future<void> _playAudio() async {
     try {
       String audioUrl = await _getAudioUrl(widget.id);
 
-      await _audioPlayer.setUrl(audioUrl);
+      // Preload audio data
+      await _audioPlayer.setUrl(audioUrl, preload: true);
 
-      if (_audioPlayer.playing) {
-        await _audioPlayer.pause();
-      } else {
-        await _audioPlayer.play();
-      }
-    } catch (e) {
+      // Set the URL and play, starting from the saved position
+      await _audioPlayer.seek(_currentPosition);
+      await _audioPlayer.play();
+
+      // Update the UI when the player state changes
+      setState(() {});
+    } catch (e, stackTrace) {
       print("Error playing audio: $e");
+      print("Stack trace: $stackTrace");
+      // Handle the error, display a user-friendly message, or log it for debugging.
     }
   }
 
@@ -177,6 +199,13 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     }
   }
 
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$twoDigitMinutes:$twoDigitSeconds';
+  }
+
   Widget mediaPlayerDesign(WidgetRef ref) {
     final audioPositionData = ref.watch(audioPositionProvider);
     final isPlaying = ref.read(audioStateProvider).isPlaying;
@@ -186,21 +215,30 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     return Container(
       padding: EdgeInsets.all(16.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(
+          IconButton(
+            icon: StreamBuilder<PlayerState>(
+              stream: _audioPlayer.playerStateStream,
+              builder: (context, snapshot) {
+                final bool isPlaying = snapshot.data?.playing ?? false;
+                return Icon(
                   isPlaying ? Icons.pause : Icons.play_arrow,
                   size: 40.0,
-                ),
-                onPressed: () {
-                  ref.read(audioStateProvider.notifier).playPause();
-                },
-              ),
-            ],
+                );
+              },
+            ),
+            onPressed: () async {
+              if (_audioPlayer.playing) {
+                await _audioPlayer.pause();
+                _currentPosition = await _audioPlayer.position;
+              } else {
+                // Only play audio if it's not already playing
+                if (!_audioPlayer.playing) {
+                  await _playAudio();
+                }
+              }
+              // No need to call setState here, it's handled by the StreamBuilder
+            },
           ),
           Column(
             children: [
@@ -254,18 +292,13 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     );
   }
 
-  String formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$twoDigitMinutes:$twoDigitSeconds';
-  }
-
   @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
   }
+
+  //end of audio code
 
   @override
   Widget build(BuildContext context) {
@@ -374,8 +407,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           BottomNavigationBarItem(
             icon: InkWell(
               onTap: () {
-                // Handle the counter functionality here
-                // For example, you can increment the count variable
                 setState(() {
                   if (count > 0) {
                     count -= 1;
