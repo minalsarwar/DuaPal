@@ -174,6 +174,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -272,7 +273,9 @@ class ReminderScreen extends ConsumerWidget {
           ),
         );
       },
-      loading: () => CircularProgressIndicator(),
+      loading: () => CircularProgressIndicator(
+        color: CustomColors.mainColor,
+      ),
       error: (error, stackTrace) => Text('Error fetching reminders'),
     );
   }

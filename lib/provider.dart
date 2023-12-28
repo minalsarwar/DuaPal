@@ -93,7 +93,7 @@ final selectedTimeProvider = StateProvider<TimeOfDay?>((ref) => null);
 
 // Provider for managing the selected color
 final selectedColorProvider =
-    StateProvider<Color>((ref) => Color.fromARGB(197, 199, 222, 241));
+    StateProvider<Color>((ref) => Color.fromARGB(197, 228, 244, 243));
 
 final entryIdProvider = StateProvider<String?>((ref) => null);
 

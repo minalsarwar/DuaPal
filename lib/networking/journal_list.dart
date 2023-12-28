@@ -99,7 +99,10 @@ class JournalListScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+            child: CircularProgressIndicator(
+          color: CustomColors.mainColor,
+        )),
         error: (error, stack) => Text('Error: $error'),
       ),
       floatingActionButton: FloatingActionButton(
