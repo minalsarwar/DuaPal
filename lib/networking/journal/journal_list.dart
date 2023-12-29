@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/networking/journal_entry.dart';
+import 'package:flutter_application_1/networking/journal/journal_entry.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,85 +1,6 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_application_1/constants/constants.dart';
-// import 'package:flutter_application_1/networking/dua_detail.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_application_1/provider.dart'; // Import your providers here
-
-// class SearchScreen extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final searchText = ref.watch(searchTextProvider);
-//     // ref.read(searchTextProvider.notifier).state = 'forgiveness';
-//     final searchResult = ref.watch(searchResultProvider);
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Search',
-//             style: TextStyle(
-//                 fontSize: 20,
-//                 color: Colors.white,
-//                 fontWeight: FontWeight.bold)),
-//         backgroundColor: CustomColors.mainColor,
-//         centerTitle: true,
-//         iconTheme: IconThemeData(
-//           color: Colors.white,
-//         ),
-//       ),
-//       body: searchResult.when(
-//         loading: () => Center(
-//           child: CircularProgressIndicator(
-//             valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
-//           ),
-//         ),
-//         error: (error, stack) => Text('Error: $error'),
-//         data: (duas) {
-//           if (duas.isEmpty) {
-//             // Display a message when there are no favorites yet
-//             return Center(
-//               child: Text(
-//                 'No result!${ref.watch(searchTextProvider)}',
-//                 style: TextStyle(fontSize: 20, color: Colors.grey),
-//               ),
-//             );
-//           }
-//           return ListView.builder(
-//             itemCount: duas.length,
-//             itemBuilder: (context, index) {
-//               final dua = duas[index];
-//               return GestureDetector(
-//                 onTap: () {
-//                   // Navigate to the detail screen when a card is tapped
-//                   Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                       builder: (context) => DetailScreen(
-//                         id: dua.id, // Pass the document ID as the title
-//                         title: dua.title,
-//                         arabic: dua.arabic,
-//                         transliteration: dua.transliteration,
-//                         translation: dua.translation,
-//                         source: dua.source,
-//                         count: dua.count,
-//                         explanation: dua.explanation,
-//                       ),
-//                     ),
-//                   );
-//                 },
-//                 child: CardItem(
-//                   itemCount: index + 1, // Item count starts from 1
-//                   title: dua.title,
-//                 ),
-//               );
-//             },
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/networking/dua_detail.dart';
+import 'package:flutter_application_1/networking/duas/dua_detail.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/provider.dart'; // Import your providers here
 
@@ -205,10 +126,6 @@ class SearchScreen extends ConsumerWidget {
     );
   }
 }
-
-// Your CardItem widget and other parts remain unchanged
-
-// Your CardItem widget and other parts remain unchanged
 
 class CardItem extends StatelessWidget {
   final int itemCount;

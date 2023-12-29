@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/model/dua_model.dart';
-import 'package:flutter_application_1/networking/dua_detail.dart';
+import 'package:flutter_application_1/networking/duas/dua_detail.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,8 +15,8 @@ class FavListScreen extends ConsumerWidget {
       body: favList.when(
         loading: () => Center(
           child: CircularProgressIndicator(
-            // valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
-          ),
+              // valueColor: AlwaysStoppedAnimation<Color>(CustomColors.mainColor),
+              ),
         ),
         error: (error, stack) => Text('Error: $error'),
         data: (favs) {

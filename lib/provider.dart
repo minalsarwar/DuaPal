@@ -5,20 +5,38 @@ import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/model/dua_model.dart';
 import 'package:flutter_application_1/model/fav_model.dart';
 import 'package:flutter_application_1/model/journal_model.dart';
-import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:flutter_application_1/networking/auth/app_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
+//auth
 final authProvider = StateProvider<User?>((ref) {
   return null;
 });
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-final currentIndexProvider = StateProvider<int>((ref) => 0);
+// Provider for user ID
+final userIDProvider = StateProvider<String?>((ref) {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+
+  if (user != null) {
+    String userId = user.uid;
+    return userId;
+  } else {
+    // User is not signed in
+    return null;
+  }
+});
 
 //homepage
+final currentIndexProvider = StateProvider<int>((ref) => 0);
+final isMainSelectedProvider = StateProvider<bool>((ref) {
+  return true;
+});
 
+//duaas
 final duaListTitleProvider = StateProvider<String>((ref) {
   // The initial category title is set to an empty string
   return '';
@@ -53,6 +71,7 @@ final isEmotionTileSelectedProvider = StateProvider<bool>((ref) {
   return false;
 });
 
+//login and signup
 final emailControllerProvider = Provider<TextEditingController>((ref) {
   return TextEditingController();
 });
@@ -77,16 +96,6 @@ final isPasswordVisibleProvider = StateProvider<bool>((ref) {
 final doPasswordsMatchProvider = StateProvider<bool>((ref) {
   return true;
 });
-
-final isMainSelectedProvider = StateProvider<bool>((ref) {
-  return true;
-});
-
-// final passwordsMatchProvider = StateProvider<bool>((ref) => true);
-
-// final isPasswordVisibleProvider = StateProvider<bool>((ref) {
-//   return false;
-// });
 
 //journal entry providers
 // Provider for the journal entry text
@@ -203,20 +212,6 @@ final journalsProvider = StreamProvider<List<JournalModel>>((ref) {
   );
 });
 
-// Provider for user ID
-final userIDProvider = StateProvider<String?>((ref) {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = auth.currentUser;
-
-  if (user != null) {
-    String userId = user.uid;
-    return userId;
-  } else {
-    // User is not signed in
-    return null;
-  }
-});
-
 final deleteJournalEntryProvider = Provider<void Function(String)>((ref) {
   return (String documentId) async {
     try {
@@ -232,87 +227,7 @@ final deleteJournalEntryProvider = Provider<void Function(String)>((ref) {
   };
 });
 
-final favoritesProvider =
-    StateNotifierProvider<FavoritesNotifier, List<String>>((ref) {
-  return FavoritesNotifier();
-});
-
-class FavoritesNotifier extends StateNotifier<List<String>> {
-  FavoritesNotifier() : super([]);
-
-  // void removeFromFavorites(String duaId) {
-  //   print('Removing dua from favorites with ID: $duaId');
-
-  //   FirebaseFirestore.instance
-  //       .collection('favorites')
-  //       .where('user_id', isEqualTo: AuthService().getUserId())
-  //       .where('dua_id', isEqualTo: duaId)
-  //       .get()
-  //       .then((QuerySnapshot snapshot) {
-  //     if (snapshot.docs.isNotEmpty) {
-  //       snapshot.docs.first.reference.delete();
-
-  //       state = state.where((id) => id != duaId).toList();
-  //     }
-  //   });
-  // }
-
-//   void removeFromFavorites(String userId, String duaId) {
-//   print('Removing dua from favorites with ID: $duaId');
-
-//   FirebaseFirestore.instance
-//       .collection('favorites')
-//       .where('user_id', isEqualTo: userId)
-//       .where('dua_id', isEqualTo: duaId)
-//       .get()
-//       .then((QuerySnapshot snapshot) {
-//     if (snapshot.docs.isNotEmpty) {
-//       snapshot.docs.first.reference.delete();
-
-//       state = state.where((id) => id != duaId).toList();
-//     }
-//   });
-// }
-
-  Future<void> removeFromFavorites(String duaId) async {
-    print('Removing dua from favorites with ID: $duaId');
-
-    // Access userId directly from AuthService
-    String? userId = await AuthService().getUserId();
-    if (userId != null) {
-      await FirebaseFirestore.instance
-          .collection('favorites')
-          .where('user_id', isEqualTo: userId)
-          .where('dua_id', isEqualTo: duaId)
-          .get()
-          .then((QuerySnapshot snapshot) async {
-        if (snapshot.docs.isNotEmpty) {
-          await snapshot.docs.first.reference.delete();
-
-          state = state.where((id) => id != duaId).toList();
-        }
-      });
-    }
-
-    // Add a return statement to satisfy the return type
-    return Future.value();
-  }
-
-  void addToFavorites(String duaId) {
-    FirebaseFirestore.instance.collection('favorites').add({
-      'user_id': AuthService().getUserId(),
-      'dua_id': duaId,
-    }).then((_) {
-      // Add to state
-      state = [...state, duaId];
-    });
-  }
-}
-
-final detailTitleProvider = StateProvider<String?>((ref) => null);
-
 //reminder
-
 final remindersProvider = StreamProvider<List<Reminder>>((ref) {
   return FirebaseFirestore.instance.collection('reminders').snapshots().map(
       (snapshot) =>
@@ -337,7 +252,7 @@ class Reminder {
   }
 }
 
-//////
+//favorites
 final favProvider = StreamProvider<List<FavModel>>((ref) {
   String? userID = ref.watch(userIDProvider);
   print('USER ID: ${userID ?? "User not signed in"}');
@@ -374,7 +289,6 @@ final deleteFavProvider = Provider<void Function(String)>((ref) {
 });
 
 //audio
-
 final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   return AudioPlayer();
 });
@@ -451,7 +365,6 @@ final showTransliterationProvider = StateProvider<bool>((ref) => true);
 final selectedArabicFontProvider = StateProvider<String>((ref) => "Naskh");
 
 //search
-
 final searchTextProvider = StateProvider<String>((ref) {
   // The initial category title is set to an empty string
   return "null";

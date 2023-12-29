@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:flutter_application_1/networking/auth/app_state.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -139,21 +139,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
   //end of favorite code
 
-  // Future<void> _playAudio() async {
-  //   try {
-  //     String audioUrl = await _getAudioUrl(widget.id);
-
-  //     // Set the URL and play, starting from the saved position
-  //     await _audioPlayer.setUrl(audioUrl);
-  //     await _audioPlayer.seek(_currentPosition);
-  //     await _audioPlayer.play();
-
-  //     // Update the UI when the player state changes
-  //     setState(() {});
-  //   } catch (e) {
-  //     print("Error playing audio: $e");
-  //   }
-  // }
   Future<void> _playAudio() async {
     try {
       String audioUrl = await _getAudioUrl(widget.id);

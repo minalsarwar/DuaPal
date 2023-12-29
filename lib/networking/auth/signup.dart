@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/networking/app_state.dart';
+import 'package:flutter_application_1/networking/auth/app_state.dart';
 
 class SignUpPage extends ConsumerWidget {
   @override
