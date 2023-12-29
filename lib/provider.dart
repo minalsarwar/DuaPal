@@ -449,3 +449,44 @@ final sourceTextSizeProvider = StateProvider<double>((ref) => 16.0);
 final showTranslationsProvider = StateProvider<bool>((ref) => true);
 final showTransliterationProvider = StateProvider<bool>((ref) => true);
 final selectedArabicFontProvider = StateProvider<String>((ref) => "Naskh");
+
+//search
+
+final searchTextProvider = StateProvider<String>((ref) {
+  // The initial category title is set to an empty string
+  return "null";
+});
+
+//the following method does prefix search only
+// final searchResultProvider = StreamProvider<List<DuaModel>>((ref) {
+//   final searchText = ref.watch(searchTextProvider);
+
+//   Query query = FirebaseFirestore.instance
+//       .collection('dua_detail')
+//       .where('title', isGreaterThanOrEqualTo: searchText)
+//       .where('title', isLessThan: searchText + 'z');
+
+//   return query.snapshots().map(
+//     (snapshot) {
+//       return snapshot.docs
+//           .map((doc) => DuaModel.fromFirestore(
+//               doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+//           .toList();
+//     },
+//   );
+// });
+
+final searchResultProvider = StreamProvider<List<DuaModel>>((ref) {
+  final searchText = ref.watch(searchTextProvider);
+
+  Query query = FirebaseFirestore.instance.collection('dua_detail');
+
+  return query.snapshots().map((snapshot) {
+    return snapshot.docs
+        .map((doc) => DuaModel.fromFirestore(
+            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+        .where(
+            (dua) => dua.title.toLowerCase().contains(searchText.toLowerCase()))
+        .toList();
+  });
+});

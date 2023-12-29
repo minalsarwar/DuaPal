@@ -10,6 +10,7 @@ import 'package:flutter_application_1/networking/feedback.dart';
 import 'package:flutter_application_1/networking/journal_entry.dart';
 import 'package:flutter_application_1/networking/journal_list.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
+import 'package:flutter_application_1/networking/search.dart';
 import 'package:flutter_application_1/networking/settings.dart';
 import 'package:flutter_application_1/networking/tasbeeh_counter.dart';
 import 'package:flutter_application_1/provider.dart';
@@ -112,12 +113,15 @@ class HomeScreen extends ConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          // IconButton(
-          //   icon: Icon(Icons.search, color: Colors.white),
-          //   onPressed: () {
-          //     // Handle search action
-          //   },
-          // ),
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
             onPressed: () {
