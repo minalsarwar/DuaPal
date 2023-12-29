@@ -234,7 +234,7 @@ class HomeScreen extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 325),
+            const SizedBox(height: 320),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -739,7 +739,7 @@ class HomeContent extends ConsumerWidget {
         }),
         buildDoubleCard(
           'Praises of Allah',
-          'android/assets/praisesofAllah.jpg',
+          'android/assets/praisesOfAllah.jpg',
           'Salawat',
           'android/assets/salawat.jpg',
           () {

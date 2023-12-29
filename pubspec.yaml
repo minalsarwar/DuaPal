@@ -71,6 +71,8 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_local_notifications: ^16.3.0
   url_launcher: ^6.2.2
+  firebase_auth_mocks: ^0.13.0
+  mockito: ^5.4.4
   # social_share: ^2.3.1
   # flutter_share_me: ^1.4.0
 
@@ -103,7 +105,7 @@ flutter:
     - android/assets/beforeSleep.jpg
     - android/assets/salah.jpg
     - android/assets/afterSalah.jpg
-    - android/assets/praisesofAllah.jpg
+    - android/assets/praisesOfAllah.jpg
     - android/assets/salawat.jpg
     - android/assets/quranicDuas.jpg
     - android/assets/sunnahDuas.jpg
