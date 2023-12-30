@@ -8,6 +8,7 @@
 
 // import 'package:flutter_test/flutter_test.dart';
 // import 'package:golden_toolkit/golden_toolkit.dart';
+// import 'mock_firebase.dart';
 
 // void main() {
 //   setUpAll(() => loadAppFonts());
@@ -23,7 +24,7 @@
 //       ])
 //       ..addScenario(
 //         widget: ProviderScope(
-//           child: HomeScreen(),
+//           child: LoginPage(),
 //         ),
 //         name: 'sc page',
 //       );
@@ -37,6 +38,15 @@
 //     await screenMatchesGolden(tester, 'first_screen_shot');
 //   });
 // }
+
+
+
+
+
+
+
+
+
 
 // // // class FirebaseInitWrapper extends StatefulWidget {
 // // //   final Widget child;
