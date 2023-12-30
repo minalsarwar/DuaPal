@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/networking/about.dart';
-import 'package:flutter_application_1/networking/dua_list.dart';
+import 'package:flutter_application_1/networking/drawer/about.dart';
+import 'package:flutter_application_1/networking/duas/dua_list.dart';
 import 'package:flutter_application_1/networking/emotions.dart';
-import 'package:flutter_application_1/networking/faqs.dart';
-import 'package:flutter_application_1/networking/favorites.dart';
+import 'package:flutter_application_1/networking/drawer/faqs.dart';
 import 'package:flutter_application_1/networking/favourites_list.dart';
-import 'package:flutter_application_1/networking/feedback.dart';
-import 'package:flutter_application_1/networking/journal_entry.dart';
-import 'package:flutter_application_1/networking/journal_list.dart';
+import 'package:flutter_application_1/networking/drawer/feedback.dart';
+import 'package:flutter_application_1/networking/journal/journal_entry.dart';
+import 'package:flutter_application_1/networking/journal/journal_list.dart';
 import 'package:flutter_application_1/networking/reminder.dart';
-import 'package:flutter_application_1/networking/settings.dart';
-import 'package:flutter_application_1/networking/tasbeeh_counter.dart';
+import 'package:flutter_application_1/networking/app_bar/search.dart';
+import 'package:flutter_application_1/networking/app_bar/settings.dart';
+import 'package:flutter_application_1/networking/drawer/tasbeeh_counter.dart';
 import 'package:flutter_application_1/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -112,12 +112,15 @@ class HomeScreen extends ConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          // IconButton(
-          //   icon: Icon(Icons.search, color: Colors.white),
-          //   onPressed: () {
-          //     // Handle search action
-          //   },
-          // ),
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
             onPressed: () {
@@ -249,14 +252,12 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       body: currentIndex == 1
-          // ? FavoritesScreen()
           ? FavListScreen()
           : currentIndex == 4
               ? ReminderScreen()
               : currentIndex == 3
                   ? EmotionsContent()
                   : currentIndex == 2
-                      // ? JournalEntryScreen()
                       ? JournalListScreen()
                       : HomeContent(),
       bottomNavigationBar: BottomNavigationBar(
@@ -298,321 +299,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-
-//   @override
-//   _HomeScreenState createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-//   int _currentIndex = 0;
-//   bool isMainSelected = true;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     String appBarTitle = 'Home';
-
-//     switch (_currentIndex) {
-//       case 0:
-//         appBarTitle = 'Home';
-//         break;
-//       case 1:
-//         appBarTitle = 'Favourites';
-//         break;
-//       case 2:
-//         appBarTitle = 'Journal';
-//         break;
-//       case 3:
-//         appBarTitle = 'Emotions';
-//         break;
-//       case 4:
-//         appBarTitle = 'Reminder';
-//         break;
-//     }
-
-//     Widget buildSocialIcon(String text, IconData iconData) {
-//       return Column(
-//         children: [
-//           Ink(
-//             decoration: ShapeDecoration(
-//               color: Colors.grey[200],
-//               shape: CircleBorder(),
-//             ),
-//             child: CircleAvatar(
-//               backgroundColor: Colors.transparent,
-//               child: Icon(
-//                 iconData,
-//                 color: CustomColors.mainColor,
-//               ),
-//             ),
-//           ),
-//         ],
-//       );
-//     }
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: CustomColors.mainColor,
-//         title: Text(
-//           appBarTitle,
-//           style: TextStyle(
-//               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-//         ),
-//         centerTitle: true,
-//         actions: [
-//           // IconButton(
-//           //   icon: Icon(Icons.search, color: Colors.white),
-//           //   onPressed: () {
-//           //     // Handle search action
-//           //   },
-//           // ),
-//           IconButton(
-//             icon: Icon(Icons.settings, color: Colors.white),
-//             onPressed: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(builder: (context) => SettingsScreen()),
-//               );
-//             },
-//           ),
-//         ],
-//         iconTheme: IconThemeData(
-//           color: Colors.white,
-//         ),
-//       ),
-//       drawer: Drawer(
-//         backgroundColor: Colors.white,
-//         child: Column(
-//           children: <Widget>[
-//             DrawerHeader(
-//               decoration: BoxDecoration(),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Padding(
-//                     padding: const EdgeInsets.all(8.0),
-//                     child: Image.asset('android/assets/appLogo.png',
-//                         height: 70, width: 60),
-//                   ),
-//                   Text('Dua Pal',
-//                       style:
-//                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-//                 ],
-//               ),
-//             ),
-//             ListTile(
-//               leading: Image.asset(
-//                 'android/assets/tasbih.png', // Adjust the path to the icon
-//                 width: 30, // Specify the width of the icon
-//                 height: 30, // Specify the height of the icon
-//                 color: Color.fromARGB(
-//                     255, 113, 176, 205), // Set the desired icon color
-//               ),
-//               title: Text(
-//                 'Tasbih Counter',
-//                 style: TextStyle(fontSize: 16),
-//               ),
-//               onTap: () {
-//                 // Handle Tasbih Counter action
-//               },
-//             ),
-//             ListTile(
-//               leading: Icon(Icons.chat_bubble_outline,
-//                   size: 28, color: CustomColors.mainColor),
-//               title: Text('Feedback', style: TextStyle(fontSize: 16)),
-//               onTap: () {
-//                 // Handle Feedback action
-//               },
-//             ),
-//             ListTile(
-//               leading: Icon(Icons.help_outline_rounded,
-//                   size: 28, color: CustomColors.mainColor),
-//               title: Text('FAQs', style: TextStyle(fontSize: 16)),
-//               onTap: () {
-//                 // Handle FAQs action
-//               },
-//             ),
-//             ListTile(
-//               leading: Icon(Icons.info_outline_rounded,
-//                   size: 28, color: CustomColors.mainColor),
-//               title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
-//               onTap: () {
-//                 // Handle FAQs action
-//               },
-//             ),
-//             const SizedBox(height: 325),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 buildSocialIcon('facebook', Icons.facebook),
-//                 buildSocialIcon('instagram', FontAwesomeIcons.instagram),
-//                 buildSocialIcon('twitter', FontAwesomeIcons.twitter),
-//                 buildSocialIcon('telegram', FontAwesomeIcons.telegram),
-//                 buildSocialIcon('whatsapp', FontAwesomeIcons.whatsapp),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//       body: _currentIndex == 1
-//           // ? FavoritesScreen()
-//           ? FavListScreen()
-//           : _currentIndex == 4
-//               ? ReminderScreen()
-//               : _currentIndex == 3
-//                   ? EmotionsContent()
-//                   : _currentIndex == 2
-//                       // ? JournalEntryScreen()
-//                       ? JournalListScreen()
-//                       : HomeContent(),
-//       bottomNavigationBar: BottomNavigationBar(
-//         type: BottomNavigationBarType.fixed,
-//         selectedItemColor: CustomColors.mainColor,
-//         unselectedItemColor: Colors.grey,
-//         selectedFontSize: 14,
-//         unselectedFontSize: 14,
-//         currentIndex: _currentIndex,
-//         items: [
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.home_outlined),
-//             label: 'Home',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.favorite_outline),
-//             label: 'Favourites',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.article_outlined),
-//             label: 'Journal',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.emoji_emotions_outlined),
-//             label: 'Emotions',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.calendar_today_outlined),
-//             label: 'Reminder',
-//           ),
-//         ],
-//         onTap: (index) {
-//           setState(() {
-//             _currentIndex = index;
-//           });
-//         },
-//       ),
-//     );
-//   }
-// }
-
-// class HomeContent extends StatefulWidget {
-//   @override
-//   _HomeContentState createState() => _HomeContentState();
-// }
-
-// class _HomeContentState extends State<HomeContent> {
-//   int _currentIndex = 0;
-//   bool isMainSelected = true;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Container(
-//           constraints: BoxConstraints(maxWidth: 200),
-//           padding: EdgeInsets.symmetric(vertical: 4.0),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(30.0),
-//           ),
-//           child: Row(
-//             children: [
-//               Expanded(
-//                 child: ElevatedButton(
-//                   onPressed: () {
-//                     setState(() {
-//                       isMainSelected = true;
-//                     });
-//                   },
-//                   style: ElevatedButton.styleFrom(
-//                     primary: isMainSelected
-//                         ? CustomColors.mainColor
-//                         : Colors.white,
-//                     elevation: 0,
-//                     padding: EdgeInsets.all(2),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.only(
-//                         topLeft: Radius.circular(30),
-//                         bottomLeft: Radius.circular(30),
-//                       ),
-//                     ),
-//                   ),
-//                   child: Ink(
-//                     child: Container(
-//                       alignment: Alignment.center,
-//                       child: Text(
-//                         'Main',
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: isMainSelected
-//                               ? FontWeight.bold
-//                               : FontWeight.normal,
-//                           color: isMainSelected ? Colors.white : Colors.black,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Expanded(
-//                 child: ElevatedButton(
-//                   onPressed: () {
-//                     setState(() {
-//                       isMainSelected = false;
-//                     });
-//                   },
-//                   style: ElevatedButton.styleFrom(
-//                     primary: !isMainSelected
-//                         ? CustomColors.mainColor
-//                         : Colors.white,
-//                     elevation: 0,
-//                     padding: EdgeInsets.all(2),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.only(
-//                         topRight: Radius.circular(30),
-//                         bottomRight: Radius.circular(30),
-//                       ),
-//                     ),
-//                   ),
-//                   child: Ink(
-//                     child: Container(
-//                       alignment: Alignment.center,
-//                       child: Text(
-//                         'Other',
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: !isMainSelected
-//                               ? FontWeight.bold
-//                               : FontWeight.normal,
-//                           color: !isMainSelected ? Colors.white : Colors.black,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//         Expanded(
-//           child: isMainSelected
-//               ? buildMainContent(context.read())
-//               : buildOtherContent(),
-//         ),
-//       ],
-//     );
-//   }
 
 class HomeContent extends ConsumerWidget {
   @override
@@ -780,15 +466,6 @@ class HomeContent extends ConsumerWidget {
     );
   }
 
-  // void navigateToListView(String title) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => DuaListScreen(title: title),
-  //     ),
-  //   );
-  // }
-
   void navigateToListView(String title, WidgetRef ref) {
     ref.read(isEmotionTileSelectedProvider.notifier).state = false;
     ref.read(duaListTitleProvider.notifier).state = title;
@@ -799,32 +476,6 @@ class HomeContent extends ConsumerWidget {
       ),
     );
   }
-
-  // Widget buildOtherContent() {
-  //   return GridView.count(
-  //     crossAxisCount: 2,
-  //     children: [
-  //       buildGridCard('Waking Up', 'android/assets/wakingup.jpg'),
-  //       buildGridCard('Nightmares', 'android/assets/nightmares.jpg'),
-  //       buildGridCard('Clothes', 'android/assets/clothes.jpg'),
-  //       buildGridCard('Lavatory & Wudu', 'android/assets/wudu.jpg'),
-  //       buildGridCard('Food & Drink', 'android/assets/food.jpg'),
-  //       buildGridCard('Home', 'android/assets/home.jpg'),
-  //       buildGridCard('Adhan & Masjid', 'android/assets/masjid.jpg'),
-  //       buildGridCard('Istikharah', 'android/assets/istikhara.jpg'),
-  //       buildGridCard('Gatherings', 'android/assets/gatherings.jpg'),
-  //       buildGridCard('Trials & Blessings', 'android/assets/emotions.jpg'),
-  //       buildGridCard('Protection of Iman', 'android/assets/iman.jpg'),
-  //       buildGridCard('Hajj & Umrah', 'android/assets/hajj.jpg'),
-  //       buildGridCard('Travel', 'android/assets/travel.jpg'),
-  //       buildGridCard('Money & Shopping', 'android/assets/shopping.jpg'),
-  //       buildGridCard('Social Interactions', 'android/assets/social.jpg'),
-  //       buildGridCard('Marriage', 'android/assets/marriage.jpg'),
-  //       buildGridCard('Death', 'android/assets/death.jpg'),
-  //       buildGridCard('Nature', 'android/assets/nature.jpg'),
-  //     ],
-  //   );
-  // }
 
   Widget buildOtherContent(WidgetRef ref) {
     return GridView.count(

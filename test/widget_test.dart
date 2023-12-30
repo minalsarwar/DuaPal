@@ -1,3 +1,26 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/networking/auth/login.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('Login text widget test', (WidgetTester tester) async {
+    await tester.pumpWidget(ProviderScope(child: LoginPage()));
+    await tester
+        .pumpAndSettle(); // Wait for any animations or async tasks to complete
+
+    expect(find.text('Log In'), findsOneWidget);
+  });
+}
+
+// // This is a basic Flutter widget test.
+// //
+// // To perform an interaction with a widget in your test, use the WidgetTester
+// // utility in the flutter_test package. For example, you can send tap and scroll
+// // gestures. You can also use WidgetTester to find child widgets in the widget
+// // tree, read text, and verify that the values of widget properties are correct.
+
 // import 'package:flutter/material.dart';
 // import 'package:flutter_application_1/main.dart';
 // import 'package:flutter_application_1/networking/login.dart';
