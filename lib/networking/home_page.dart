@@ -178,11 +178,15 @@ class HomeScreen extends ConsumerWidget {
                         height: 80, width: 70),
                   ),
                   Text('Dua Pal',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.black)),
                   Text('رفيق الدعاء',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.black)),
                 ],
               ),
             ),
@@ -195,7 +199,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               title: Text(
                 'Tasbih Counter',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Colors.black),
               ),
               onTap: () {
                 Navigator.push(
@@ -207,7 +211,8 @@ class HomeScreen extends ConsumerWidget {
             ListTile(
               leading: Icon(Icons.chat_bubble_outline,
                   size: 28, color: CustomColors.mainColor),
-              title: Text('Feedback', style: TextStyle(fontSize: 16)),
+              title: Text('Feedback',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -218,7 +223,8 @@ class HomeScreen extends ConsumerWidget {
             ListTile(
               leading: Icon(Icons.help_outline_rounded,
                   size: 28, color: CustomColors.mainColor),
-              title: Text('FAQs', style: TextStyle(fontSize: 16)),
+              title: Text('FAQs',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -229,7 +235,8 @@ class HomeScreen extends ConsumerWidget {
             ListTile(
               leading: Icon(Icons.info_outline_rounded,
                   size: 28, color: CustomColors.mainColor),
-              title: Text('About Dua Pal', style: TextStyle(fontSize: 16)),
+              title: Text('About Dua Pal',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
               onTap: () {
                 Navigator.push(
                   context,
