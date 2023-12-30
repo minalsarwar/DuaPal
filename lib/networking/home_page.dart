@@ -130,34 +130,34 @@ class HomeScreen extends ConsumerWidget {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: () async {
-              try {
-                await auth.signOut();
-                // Wait for the sign-out operation to complete
-                await Future.delayed(Duration.zero);
-                // Refresh controllers and navigate to login
-                ref.refresh(emailControllerProvider);
-                ref.refresh(passwordControllerProvider);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Signing out',
-                      textAlign: TextAlign.center,
-                    ),
-                    duration: Duration(seconds: 1),
-                    backgroundColor: CustomColors.mainColor,
-                  ),
-                );
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              } catch (error) {
-                print("Error signing out: $error");
-                // Handle any errors that occur during sign out
-              }
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.logout, color: Colors.white),
+          //   onPressed: () async {
+          //     try {
+          //       await auth.signOut();
+          //       // Wait for the sign-out operation to complete
+          //       await Future.delayed(Duration.zero);
+          //       // Refresh controllers and navigate to login
+          //       ref.refresh(emailControllerProvider);
+          //       ref.refresh(passwordControllerProvider);
+          //       ScaffoldMessenger.of(context).showSnackBar(
+          //         SnackBar(
+          //           content: Text(
+          //             'Signing out',
+          //             textAlign: TextAlign.center,
+          //           ),
+          //           duration: Duration(seconds: 1),
+          //           backgroundColor: CustomColors.mainColor,
+          //         ),
+          //       );
+          //       Navigator.pushNamedAndRemoveUntil(
+          //           context, '/login', (route) => false);
+          //     } catch (error) {
+          //       print("Error signing out: $error");
+          //       // Handle any errors that occur during sign out
+          //     }
+          //   },
+          // ),
         ],
         iconTheme: IconThemeData(
           color: Colors.white,
@@ -237,7 +237,38 @@ class HomeScreen extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 320),
+            ListTile(
+              leading:
+                  Icon(Icons.logout, size: 28, color: CustomColors.mainColor),
+              title: Text('Sign Out',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
+              onTap: () async {
+                try {
+                  await auth.signOut();
+                  // Wait for the sign-out operation to complete
+                  await Future.delayed(Duration.zero);
+                  // Refresh controllers and navigate to login
+                  ref.refresh(emailControllerProvider);
+                  ref.refresh(passwordControllerProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Signing out',
+                        textAlign: TextAlign.center,
+                      ),
+                      duration: Duration(seconds: 1),
+                      backgroundColor: CustomColors.mainColor,
+                    ),
+                  );
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (route) => false);
+                } catch (error) {
+                  print("Error signing out: $error");
+                  // Handle any errors that occur during sign out
+                }
+              },
+            ),
+            const SizedBox(height: 260),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
