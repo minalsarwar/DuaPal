@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EmotionsContent extends ConsumerWidget {
   final List<String> emotionsList = [
     'Angry',
+    'Happy',
     'Anxious',
     'Bored',
     'Confident',
@@ -17,7 +18,6 @@ class EmotionsContent extends ConsumerWidget {
     'Grateful',
     'Greedy',
     'Guilty',
-    'Happy',
     'Hurt',
     'Indecisive',
     'Hypocritical',
