@@ -1,16 +1,24 @@
-# flutter_project
 
-A new Flutter project.
+##Dua Pal - A Flutter App for Mindful Moments
 
-## Getting Started
+Welcome to Dua Pal, a Flutter app designed to help you cultivate mindfulness and tranquility through personalized journaling, emotion cards, and curated dua (prayers) cards. This repository contains the source code for the Dua Pal app.
 
-This project is a starting point for a Flutter application.
+#Features
 
-A few resources to get you started if this is your first Flutter project:
+Home Screen
+Overview: Access all main features from a single, intuitive interface.
+Navigation: Easily navigate to your journal, favorite dua cards, and reminders.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Favorites
+Save Dua Cards: Mark your favorite dua cards for quick access.
+Manage Favorites: View, add, or remove dua cards from your favorites list.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Journal Writing
+Daily Entries: Write daily journal entries to reflect on your day and emotions.
+Search and Filter: Find past entries quickly with search and filtering options.
+
+Emotions Dua Cards
+Curated Cards: Explore a collection of dua cards categorized by differen.
+
+Reminders Screen
+Current Affairs: Reminders based on the current updates of the ummah.
