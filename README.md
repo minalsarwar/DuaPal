@@ -21,3 +21,5 @@ Curated Cards: Explore a collection of dua cards categorized by differen.
 
 **Reminders Screen**
 Current Affairs: Reminders based on the current updates of the ummah.
+
+
